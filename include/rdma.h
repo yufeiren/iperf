@@ -51,13 +51,20 @@
  * threads are not available, this does nothing.
  * ------------------------------------------------------------------- */
 
+#ifndef RDMA_IPERF_H
+#define RDMA_IPERF_H
+
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 #include <rdma/rdma_cma.h>
 #include <infiniband/arch.h>
 
 /*
  * riperf data transfer type:
- * 	1 client/server set buffer, server use RDMA READ
- *	2 client/server set buffer, client use RDMA WRITE
+ *	1 client/server set buffer, client use RDMA WRITE
+ * 	2 client/server set buffer, client use RDMA READ
  *	3 client/server set buffer, 
  *	  server use RDMA READ to read data from client,
  *	  server use RDMA WRITE to write data to server.
@@ -93,9 +100,8 @@ struct rping_rdma_info {
 /*
  * Default max buffer size for IO...
  */
-/* #define RPING_BUFSIZE 64*1024 */
-#define RPING_BUFSIZE 640*1024*1024
-#define RPING_SQ_DEPTH 16
+#define RPING_BUFSIZE 64*1024
+#define RPING_RDMA_SQ_DEPTH 16
 
 /* Default string for print data and
  * minimum buffer size
@@ -158,3 +164,15 @@ struct rping_cb {
 	struct rdma_cm_id *child_cm_id;	/* connection on server side */
 };
 
+
+
+/* prototype */
+
+int rdma_init( thread_Settings *rdma_thr );
+
+
+#ifdef __cplusplus
+} /* end extern "C" */
+#endif
+
+#endif

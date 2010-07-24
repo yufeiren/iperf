@@ -255,6 +255,12 @@ thread_run_wrapper( void* paramPtr ) {
                 // Decrement the non-terminating thread count
                 thread_unregister_nonterm();
             } break;
+        case kMode_RDMA_Server:
+        case kMode_RDMA_Client:
+        case kMode_RDMA_Listener:
+	    {
+		// rdma mode
+            } break;
         default:
             {
                 FAIL(1, "Unknown Thread Type!\n", thread);

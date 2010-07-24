@@ -168,7 +168,9 @@ int main( int argc, char **argv ) {
 
     // Check for either having specified client or server
     if ( ext_gSettings->mThreadMode == kMode_Client 
-         || ext_gSettings->mThreadMode == kMode_Listener ) {
+         || ext_gSettings->mThreadMode == kMode_Listener 
+	 || ext_gSettings->mThreadMode == kMode_RDMA_Client
+	 || ext_gSettings->mThreadMode == kMode_RDMA_Listener) {
 #ifdef WIN32
         // Start the server as a daemon
         // Daemon mode for non-windows in handled
@@ -189,9 +191,16 @@ int main( int argc, char **argv ) {
         }
 #endif
         // initialize client(s)
-        if ( ext_gSettings->mThreadMode == kMode_Client ) {
+        if ( ext_gSettings->mThreadMode == kMode_Client
+	    || ext_gSettings->mThreadMode == kMode_RDMA_Client) {
             client_init( ext_gSettings );
         }
+        
+        // initialize rdma resources
+        if ( ext_gSettings->mThreadMode == kMode_RDMA_Server
+	    || ext_gSettings->mThreadMode == kMode_RDMA_Client ) {
+	    rdma_init( ext_gSettings );
+	}
 
 #ifdef HAVE_THREAD
         // start up the reporter and client(s) or listener

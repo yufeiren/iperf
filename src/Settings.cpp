@@ -538,6 +538,14 @@ void Settings_Interpret( char option, const char *optarg, thread_Settings *mExtS
 
 
             // more esoteric options
+        case 'A': // RDMA style
+		if ( mExtSettings->mThreadMode == kMode_Server )
+			mExtSettings->mThreadMode = kMode_RDMA_Listener;
+		else if ( mExtSettings->mThreadMode == kMode_Client )
+			mExtSettings->mThreadMode = kMode_RDMA_Client;
+		else
+			fprintf( stderr, warn_invalid_report_style );
+		break;
         case 'B': // specify bind address
             mExtSettings->mLocalhost = new char[ strlen( optarg ) + 1 ];
             strcpy( mExtSettings->mLocalhost, optarg );

@@ -187,6 +187,8 @@ typedef uint64_t max_size_t;
 #include "inet_aton.h"
 #include "snprintf.h"
 
+#include "rdma.h"
+
 #ifndef SHUT_RD
     #define SHUT_RD   0
     #define SHUT_WR   1

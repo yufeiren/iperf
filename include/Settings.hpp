@@ -75,7 +75,10 @@ typedef enum ThreadMode {
     kMode_Server,
     kMode_Client,
     kMode_Reporter,
-    kMode_Listener
+    kMode_Listener,
+    kMode_RDMA_Server,
+    kMode_RDMA_Client,
+    kMode_RDMA_Listener
 } ThreadMode;
 
 // report mode
@@ -91,7 +94,10 @@ typedef enum TestMode {
     kTest_Normal = 0,
     kTest_DualTest,
     kTest_TradeOff,
-    kTest_Unknown
+    kTest_Unknown,
+    kTest_RDMA_Read,
+    kTest_RDMA_Write,
+    kTest_RDMA_RdWr
 } TestMode;
 
 #include "Reporter.h"
