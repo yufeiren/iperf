@@ -303,7 +303,7 @@ int rdma_init( thread_Settings *rdma_thr ) {
 
 
 // setup queue pair
-int rdma_setup_qp(struct rping_cb *cb, struct rdma_cm_id *cm_id)
+int iperf_setup_qp(struct rping_cb *cb, struct rdma_cm_id *cm_id)
 {
 	int ret;
 
@@ -356,7 +356,7 @@ err1:
 }
 
 
-int rdma_create_qp(struct rdma_cb *cb)
+int iperf_create_qp(struct rdma_cb *cb)
 {
 	struct ibv_qp_init_attr init_attr;
 	int ret;
@@ -384,7 +384,7 @@ int rdma_create_qp(struct rdma_cb *cb)
 }
 
 
-int rdma_setup_buffers(struct rdma_cb *cb)
+int iperf_setup_buffers(struct rdma_cb *cb)
 {
 	int ret;
 
@@ -458,7 +458,7 @@ err1:
 }
 
 
-void rdma_setup_wr(struct rdma_cb *cb)
+void iperf_setup_wr(struct rdma_cb *cb)
 {
 	cb->recv_sgl.addr = (uint64_t) (unsigned long) &cb->recv_buf;
 	cb->recv_sgl.length = sizeof cb->recv_buf;

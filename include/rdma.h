@@ -183,14 +183,14 @@ void *cq_thread(void *arg);
 int rdma_init( thread_Settings *rdma_thr );
 
 
-int rdma_create_qp(struct rdma_cb *cb);
+int iperf_create_qp(struct rdma_cb *cb);
 
-int rdma_setup_qp(struct rdma_cb *cb, struct rdma_cm_id *cm_id);
+int iperf_setup_qp(struct rdma_cb *cb, struct rdma_cm_id *cm_id);
 
 
-int rdma_setup_buffers(struct rdma_cb *cb);
+int iperf_setup_buffers(struct rdma_cb *cb);
 
-void rdma_setup_wr(struct rdma_cb *cb);
+void iperf_setup_wr(struct rdma_cb *cb);
 
 int rdma_connect_client(struct rdma_cb *cb);
 
