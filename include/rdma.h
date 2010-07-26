@@ -189,8 +189,11 @@ int iperf_create_qp(struct rdma_cb *cb);
 
 int iperf_setup_qp(struct rdma_cb *cb, struct rdma_cm_id *cm_id);
 
+void iperf_free_qp(struct rdma_cb *cb);
 
 int iperf_setup_buffers(struct rdma_cb *cb);
+
+void iperf_free_buffers(struct rdma_cb *cb);
 
 void iperf_setup_wr(struct rdma_cb *cb);
 

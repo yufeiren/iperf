@@ -610,14 +610,14 @@ void Client::ConnectRDMA( ) {
 		(struct sockaddr *) &mSettings->peer, 2000);
 	if (rc) {
 		perror("rdma_resolve_addr");
-		return ret;
+		return;
 	}
 
 	sem_wait(&cb->sem);
 	if (cb->state != ROUTE_RESOLVED) {
 		fprintf(stderr, "waiting for addr/route resolution state %d\n",
 			cb->state);
-		return -1;
+		return;
 	}
 
 	fprintf(stdout, "rdma_resolve_addr - rdma_resolve_route successful\n");
@@ -625,7 +625,7 @@ void Client::ConnectRDMA( ) {
 	rc = rdma_setup_qp(cb, cb->cm_id);
 	if (rc) {
 		fprintf(stderr, "rdma_setup_qp failed: %d\n", ret);
-		return rc;
+		return;
 	}
 	
 	rc = rdma_setup_buffers(cb);
@@ -655,9 +655,9 @@ void Client::ConnectRDMA( ) {
 //	rping_test_client(cb);
 //	rdma_disconnect(cb->cm_id);
 err2:
-	rping_free_buffers(cb);
+	iperf_free_buffers(cb);
 err1:
-	rping_free_qp(cb);
+	iperf_free_qp(cb);
 
 } // end ConnectRDMA
 

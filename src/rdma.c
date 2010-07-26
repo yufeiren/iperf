@@ -383,6 +383,14 @@ int iperf_create_qp(struct rdma_cb *cb)
 	return ret;
 }
 
+void iperf_free_qp(struct rdma_cb *cb)
+{
+	ibv_destroy_qp(cb->qp);
+	ibv_destroy_cq(cb->cq);
+	ibv_destroy_comp_channel(cb->channel);
+	ibv_dealloc_pd(cb->pd);
+}
+
 
 int iperf_setup_buffers(struct rdma_cb *cb)
 {
@@ -455,6 +463,20 @@ err2:
 err1:
 	ibv_dereg_mr(cb->recv_mr);
 	return ret;
+}
+
+
+void iperf_free_buffers(struct rdma_cb *cb)
+{
+	DEBUG_LOG("rping_free_buffers called on cb %p\n", cb);
+	ibv_dereg_mr(cb->recv_mr);
+	ibv_dereg_mr(cb->send_mr);
+	ibv_dereg_mr(cb->rdma_mr);
+	free(cb->rdma_buf);
+	if (!cb->server) {
+		ibv_dereg_mr(cb->start_mr);
+		free(cb->start_buf);
+	}
 }
 
 

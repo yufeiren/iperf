@@ -181,7 +181,7 @@ typedef struct thread_Settings {
     HANDLE mHandle;
 #endif
     // rdma control block
-    struct rmda_cb *cb;
+    struct rmda_cb* cb;
 } thread_Settings;
 
 /*
