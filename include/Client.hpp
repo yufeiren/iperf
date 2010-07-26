@@ -72,6 +72,9 @@ public:
     // TCP specific version of above
     void RunTCP( void );
 
+    // RDMA specific version of above;
+    void RunRDMA( void );
+
     void InitiateServer();
 
     // UDP / TCP
@@ -81,6 +84,9 @@ public:
 
     // client connect
     void Connect( );
+    
+    // client connect rdma
+    void ConnectRDMA( );
 
 protected:
     thread_Settings *mSettings;

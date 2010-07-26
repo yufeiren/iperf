@@ -169,3 +169,62 @@ void client_init( thread_Settings *clients ) {
 #endif
 }
 
+
+// rdma implementation
+
+/*
+ * listener_spawn is responsible for creating a Listener class
+ * and launching the listener. It is provided as a means for
+ * the C thread subsystem to launch the listener C++ object.
+ */
+void rdma_listener_spawn( thread_Settings *thread ) {
+    Listener *theListener = NULL;
+
+    // start up a listener
+    theListener = new Listener( thread );
+#ifndef WIN32
+    // handling of daemon mode in non-win32 builds
+    if ( isDaemon( thread ) ) {
+        theListener->runAsDaemon("iperf",LOG_DAEMON);
+    }
+#endif
+
+    // Start listening
+    theListener->Run();
+    DELETE_PTR( theListener );
+}
+
+/*
+ * server_spawn is responsible for creating a Server class
+ * and launching the server. It is provided as a means for
+ * the C thread subsystem to launch the server C++ object.
+ */
+void rdma_server_spawn( thread_Settings *thread) {
+    Server *theServer = NULL;
+
+    // Start up the server
+    theServer = new Server( thread );
+    
+    // Run the test
+    theServer->Run();
+    DELETE_PTR( theServer);
+}
+
+/*
+ * client_spawn is responsible for creating a Client class
+ * and launching the client. It is provided as a means for
+ * the C thread subsystem to launch the client C++ object.
+ */
+void rdma_client_spawn( thread_Settings *thread ) {
+    Client *theClient = NULL;
+
+    //start up the client
+    theClient = new Client( thread );
+
+    // Let the server know about our settings
+    // theClient->InitiateServer();
+
+    // Run the test
+    theClient->RunRDMA();
+    DELETE_PTR( theClient );
+}

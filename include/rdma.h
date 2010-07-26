@@ -61,6 +61,9 @@ extern "C" {
 #include <rdma/rdma_cma.h>
 #include <infiniband/arch.h>
 
+static int debug = 0;
+#define DEBUG_LOG if (debug) printf
+
 /*
  * riperf data transfer type:
  *	1 client/server set buffer, client use RDMA WRITE
@@ -91,7 +94,7 @@ enum test_state {
 	ERROR
 };
 
-struct rping_rdma_info {
+struct iperf_rdma_info {
 	uint64_t buf;
 	uint32_t rkey;
 	uint32_t size;
@@ -100,8 +103,8 @@ struct rping_rdma_info {
 /*
  * Default max buffer size for IO...
  */
-#define RPING_BUFSIZE 64*1024
-#define RPING_RDMA_SQ_DEPTH 16
+#define IPERF_BUFSIZE 64*1024
+#define IPERF_RDMA_SQ_DEPTH 16
 
 /* Default string for print data and
  * minimum buffer size
@@ -113,9 +116,9 @@ struct rping_rdma_info {
 #define RPING_MIN_BUFSIZE       sizeof(stringify(INT_MAX)) + sizeof(RPING_MSG_FMT)
 
 /*
- * Control block struct.
+ * RDMA Control block struct.
  */
-struct rping_cb {
+struct rdma_cb {
 	int server;			/* 0 iff client */
 	pthread_t cqthread;
 	pthread_t persistent_server_thread;
@@ -166,10 +169,21 @@ struct rping_cb {
 
 
 
-/* prototype */
+/* prototype - defined in rdma.c*/
 
 int rdma_init( thread_Settings *rdma_thr );
 
+
+int rdma_create_qp(struct rdma_cb *cb);
+
+int rdma_setup_qp(struct rdma_cb *cb, struct rdma_cm_id *cm_id);
+
+
+int rdma_setup_buffers(struct rdma_cb *cb);
+
+void rdma_setup_wr(struct rdma_cb *cb);
+
+int rdma_connect_client(struct rdma_cb *cb);
 
 #ifdef __cplusplus
 } /* end extern "C" */
