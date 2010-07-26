@@ -118,7 +118,7 @@ struct iperf_rdma_info {
 /*
  * RDMA Control block struct.
  */
-struct rdma_cb {
+typedef struct rdma_cb {
 	int server;			/* 0 iff client */
 	pthread_t cqthread;
 	pthread_t persistent_server_thread;
@@ -165,7 +165,7 @@ struct rdma_cb {
 	struct rdma_cm_id *cm_id;	/* connection on client side,*/
 					/* listener on service side. */
 	struct rdma_cm_id *child_cm_id;	/* connection on server side */
-};
+} rdma_cb;
 
 
 
