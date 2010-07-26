@@ -331,7 +331,7 @@ const char warn_invalid_report[] =
 "WARNING: unknown reporting type \"%c\", ignored\n valid options are:\n\t exclude: C(connection) D(data) M(multicast) S(settings) V(server) report\n\n";
 
 extern const char warn_invalid_rdma_style[] =
-"WARNING: unknown rdma type\n\n"
+"WARNING: unknown rdma type\n\n";
 
 #ifdef __cplusplus
 } /* end extern "C" */
