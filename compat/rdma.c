@@ -54,6 +54,43 @@
 #include "headers.h"
 #include "rdma.h"
 
+static int server_recv(struct rdma_cb *cb, struct ibv_wc *wc)
+{
+	if (wc->byte_len != sizeof(cb->recv_buf)) {
+		fprintf(stderr, "Received bogus data, size %d\n", wc->byte_len);
+		return -1;
+	}
+
+	cb->remote_rkey = ntohl(cb->recv_buf.rkey);
+	cb->remote_addr = ntohll(cb->recv_buf.buf);
+	cb->remote_len  = ntohl(cb->recv_buf.size);
+	DEBUG_LOG("Received rkey %x addr %" PRIx64 " len %d from peer\n",
+		  cb->remote_rkey, cb->remote_addr, cb->remote_len);
+
+	if (cb->state <= CONNECTED || cb->state == RDMA_WRITE_COMPLETE)
+		cb->state = RDMA_READ_ADV;
+	else
+		cb->state = RDMA_WRITE_ADV;
+
+	return 0;
+}
+
+static int client_recv(struct rdma_cb *cb, struct ibv_wc *wc)
+{
+	if (wc->byte_len != sizeof(cb->recv_buf)) {
+		fprintf(stderr, "Received bogus data, size %d\n", wc->byte_len);
+		return -1;
+	}
+
+	if (cb->state == RDMA_READ_ADV)
+		cb->state = RDMA_WRITE_ADV;
+	else
+		cb->state = RDMA_WRITE_COMPLETE;
+
+	return 0;
+}
+
+
 int iperf_cma_event_handler(struct rdma_cm_id *cma_id,
 				    struct rdma_cm_event *event)
 {
