@@ -64,8 +64,8 @@ static int server_recv(struct rdma_cb *cb, struct ibv_wc *wc)
 	cb->remote_rkey = ntohl(cb->recv_buf.rkey);
 	cb->remote_addr = ntohll(cb->recv_buf.buf);
 	cb->remote_len  = ntohl(cb->recv_buf.size);
-	DEBUG_LOG("Received rkey %x addr %" PRIx64 " len %d from peer\n",
-		  cb->remote_rkey, cb->remote_addr, cb->remote_len);
+//	DEBUG_LOG("Received rkey %x addr %" PRIx64 " len %d from peer\n",
+//		  cb->remote_rkey, cb->remote_addr, cb->remote_len);
 
 	if (cb->state <= CONNECTED || cb->state == RDMA_WRITE_COMPLETE)
 		cb->state = RDMA_READ_ADV;
@@ -297,7 +297,7 @@ int rdma_init( struct rdma_cb *cb ) {
 	if (!cb)
 		return -ENOMEM;
 
-	rdma_thr->cb = cb;
+	// rdma_thr->cb = cb;
 	
 	memset(cb, 0, sizeof(*cb));
 	cb->server = -1;
@@ -339,7 +339,7 @@ int rdma_init( struct rdma_cb *cb ) {
 
 
 // setup queue pair
-int iperf_setup_qp(struct rping_cb *cb, struct rdma_cm_id *cm_id)
+int iperf_setup_qp(struct rdma_cb *cb, struct rdma_cm_id *cm_id)
 {
 	int ret;
 
@@ -398,7 +398,7 @@ int iperf_create_qp(struct rdma_cb *cb)
 	int ret;
 
 	memset(&init_attr, 0, sizeof(init_attr));
-	init_attr.cap.max_send_wr = RPING_SQ_DEPTH;
+	init_attr.cap.max_send_wr = IPERF_RDMA_SQ_DEPTH;
 	init_attr.cap.max_recv_wr = 2;
 	init_attr.cap.max_recv_sge = 1;
 	init_attr.cap.max_send_sge = 1;
