@@ -210,9 +210,9 @@ void Client::RunRDMA( void ) {
 
     char* readAt = mBuf;
 
-    struct rdma_cb *cb = mSettings->cb;
+    struct rdma_cb* cb = mSettings->cb;
     
-    struct ibv_send_wr *bad_wr;
+    struct ibv_send_wr* bad_wr;
     
     // Indicates if the stream is readable 
     bool canRead = true, mMode_Time = isModeTime( mSettings ); 
@@ -558,7 +558,7 @@ void Client::Connect( ) {
 void Client::ConnectRDMA( ) {
     int rc;
     struct rdma_cb *cb;
-    
+    struct ibv_send_wr* bad_wr;
     SockAddr_remoteAddr( mSettings );
 
     assert( mSettings->inHostname != NULL );
@@ -622,21 +622,21 @@ void Client::ConnectRDMA( ) {
 
 	fprintf(stdout, "rdma_resolve_addr - rdma_resolve_route successful\n");
 	
-	rc = rdma_setup_qp(cb, cb->cm_id);
+	rc = iperf_setup_qp(cb, cb->cm_id);
 	if (rc) {
-		fprintf(stderr, "rdma_setup_qp failed: %d\n", ret);
+		fprintf(stderr, "iperf_setup_qp failed: %d\n", rc);
 		return;
 	}
 	
-	rc = rdma_setup_buffers(cb);
-	if (ret) {
-		fprintf(stderr, "rdma_setup_buffers failed: %d\n", ret);
+	rc = iperf_setup_buffers(cb);
+	if (rc) {
+		fprintf(stderr, "rdma_setup_buffers failed: %d\n", rc);
 		goto err1;
 	}
 	
 	rc = ibv_post_recv(cb->qp, &cb->rq_wr, &bad_wr);
 	if (rc) {
-		fprintf(stderr, "ibv_post_recv failed: %d\n", ret);
+		fprintf(stderr, "ibv_post_recv failed: %d\n", rc);
 		goto err2;
 	}
 
@@ -644,12 +644,12 @@ void Client::ConnectRDMA( ) {
 
 	rc = rdma_connect_client(cb);
 	if (rc) {
-		fprintf(stderr, "connect error %d\n", ret);
+		fprintf(stderr, "connect error %d\n", rc);
 		goto err2;
 	}
 
-	(sockaddr*) &mSettings->local = rdma_get_local_addr(&cb->cm_id);
-	(sockaddr*) &mSettings->peer = rdma_get_peer_addr(&cb->cm_id);
+	(sockaddr*) &mSettings->local = rdma_get_local_addr(cb->cm_id);
+	(sockaddr*) &mSettings->peer = rdma_get_peer_addr(cb->cm_id);
 
 	return;
 //	rping_test_client(cb);
