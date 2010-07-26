@@ -54,6 +54,205 @@
 
 #include "rdma.h"
 
+int iperf_cma_event_handler(struct rdma_cm_id *cma_id,
+				    struct rdma_cm_event *event)
+{
+	int ret = 0;
+	struct rdma_cb *cb = cma_id->context;
+
+	DEBUG_LOG("cma_event type %s cma_id %p (%s)\n",
+		  rdma_event_str(event->event), cma_id,
+		  (cma_id == cb->cm_id) ? "parent" : "child");
+
+	switch (event->event) {
+	case RDMA_CM_EVENT_ADDR_RESOLVED:
+		cb->state = ADDR_RESOLVED;
+		ret = rdma_resolve_route(cma_id, 2000);
+		if (ret) {
+			cb->state = ERROR;
+			perror("rdma_resolve_route");
+			sem_post(&cb->sem);
+		}
+		break;
+
+	case RDMA_CM_EVENT_ROUTE_RESOLVED:
+		cb->state = ROUTE_RESOLVED;
+		sem_post(&cb->sem);
+		break;
+
+	case RDMA_CM_EVENT_CONNECT_REQUEST:
+		cb->state = CONNECT_REQUEST;
+		cb->child_cm_id = cma_id;
+		DEBUG_LOG("child cma %p\n", cb->child_cm_id);
+		sem_post(&cb->sem);
+		break;
+
+	case RDMA_CM_EVENT_ESTABLISHED:
+		DEBUG_LOG("ESTABLISHED\n");
+
+		/*
+		 * Server will wake up when first RECV completes.
+		 */
+		if (!cb->server) {
+			cb->state = CONNECTED;
+		}
+		sem_post(&cb->sem);
+		break;
+
+	case RDMA_CM_EVENT_ADDR_ERROR:
+	case RDMA_CM_EVENT_ROUTE_ERROR:
+	case RDMA_CM_EVENT_CONNECT_ERROR:
+	case RDMA_CM_EVENT_UNREACHABLE:
+	case RDMA_CM_EVENT_REJECTED:
+		fprintf(stderr, "cma event %s, error %d\n",
+			rdma_event_str(event->event), event->status);
+		sem_post(&cb->sem);
+		ret = -1;
+		break;
+
+	case RDMA_CM_EVENT_DISCONNECTED:
+		fprintf(stderr, "%s DISCONNECT EVENT...\n",
+			cb->server ? "server" : "client");
+		sem_post(&cb->sem);
+		break;
+
+	case RDMA_CM_EVENT_DEVICE_REMOVAL:
+		fprintf(stderr, "cma detected device removal!!!!\n");
+		ret = -1;
+		break;
+
+	default:
+		fprintf(stderr, "unhandled event: %s, ignoring\n",
+			rdma_event_str(event->event));
+		break;
+	}
+
+	return ret;
+}
+
+void *cm_thread(void *arg) {
+	struct rdma_cb *cb = arg;
+	struct rdma_cm_event *event;
+	int ret;
+
+	while (1) {
+		ret = rdma_get_cm_event(cb->cm_channel, &event);
+		if (ret) {
+			perror("rdma_get_cm_event");
+			exit(ret);
+		}
+		ret = iperf_cma_event_handler(event->id, event);
+		rdma_ack_cm_event(event);
+		if (ret)
+			exit(ret);
+	}
+}
+
+
+int iperf_cq_event_handler(struct rdma_cb *cb)
+{
+	struct ibv_wc wc;
+	struct ibv_recv_wr *bad_wr;
+	int ret;
+
+	while ((ret = ibv_poll_cq(cb->cq, 1, &wc)) == 1) {
+		ret = 0;
+
+		if (wc.status) {
+			fprintf(stderr, "cq completion failed status %d\n",
+				wc.status);
+			if (wc.status != IBV_WC_WR_FLUSH_ERR)
+				ret = -1;
+			goto error;
+		}
+
+		switch (wc.opcode) {
+		case IBV_WC_SEND:
+			DEBUG_LOG("send completion\n");
+			break;
+
+		case IBV_WC_RDMA_WRITE:
+			DEBUG_LOG("rdma write completion\n");
+			cb->state = RDMA_WRITE_COMPLETE;
+			sem_post(&cb->sem);
+			break;
+
+		case IBV_WC_RDMA_READ:
+			DEBUG_LOG("rdma read completion\n");
+			cb->state = RDMA_READ_COMPLETE;
+			sem_post(&cb->sem);
+			break;
+
+		case IBV_WC_RECV:
+			DEBUG_LOG("recv completion\n");
+			ret = cb->server ? server_recv(cb, &wc) :
+					   client_recv(cb, &wc);
+			if (ret) {
+				fprintf(stderr, "recv wc error: %d\n", ret);
+				goto error;
+			}
+
+			ret = ibv_post_recv(cb->qp, &cb->rq_wr, &bad_wr);
+			if (ret) {
+				fprintf(stderr, "post recv error: %d\n", ret);
+				goto error;
+			}
+			sem_post(&cb->sem);
+			break;
+
+		default:
+			DEBUG_LOG("unknown!!!!! completion\n");
+			ret = -1;
+			goto error;
+		}
+	}
+	if (ret) {
+		fprintf(stderr, "poll error %d\n", ret);
+		goto error;
+	}
+	return 0;
+
+error:
+	cb->state = ERROR;
+	sem_post(&cb->sem);
+	return ret;
+}
+
+
+void *cq_thread(void *arg)
+{
+	struct rdma_cb *cb = arg;
+	struct ibv_cq *ev_cq;
+	void *ev_ctx;
+	int ret;
+	
+	DEBUG_LOG("cq_thread started.\n");
+
+	while (1) {	
+		pthread_testcancel();
+
+		ret = ibv_get_cq_event(cb->channel, &ev_cq, &ev_ctx);
+		if (ret) {
+			fprintf(stderr, "Failed to get cq event!\n");
+			pthread_exit(NULL);
+		}
+		if (ev_cq != cb->cq) {
+			fprintf(stderr, "Unknown CQ!\n");
+			pthread_exit(NULL);
+		}
+		ret = ibv_req_notify_cq(cb->cq, 0);
+		if (ret) {
+			fprintf(stderr, "Failed to set notify!\n");
+			pthread_exit(NULL);
+		}
+		ret = iperf_cq_event_handler(cb);
+		ibv_ack_cq_events(cb->cq, 1);
+		if (ret)
+			pthread_exit(NULL);
+	}
+}
+
+
 int rdma_init( thread_Settings *rdma_thr ) {
 	struct rdma_cb *cb;
 	int ret = 0;

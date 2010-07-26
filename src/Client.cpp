@@ -248,43 +248,45 @@ void Client::RunRDMA( void ) {
 
 	cb->state = RDMA_READ_ADV;
 
-	ret = ibv_post_send(cb->qp, &cb->sq_wr, &bad_wr);
-	if (ret) {
-		fprintf(stderr, "post send error %d\n", ret);
+	err = ibv_post_send(cb->qp, &cb->sq_wr, &bad_wr);
+	if (err) {
+		fprintf(stderr, "post send error %d\n", err);
 		break;
 	}
 
-	/* Wait for server to ACK */
+	/* Wait for server to ACK read complete */
 	sem_wait(&cb->sem);
 	if (cb->state != RDMA_WRITE_ADV) {
 		fprintf(stderr, "wait for RDMA_WRITE_ADV state %d\n",
 			cb->state);
-		ret = -1;
+		err = -1;
 		break;
 	}
-
+/*
 	rping_format_send(cb, cb->rdma_buf, cb->rdma_mr);
 	ret = ibv_post_send(cb->qp, &cb->sq_wr, &bad_wr);
 	if (ret) {
 		fprintf(stderr, "post send error %d\n", ret);
 		break;
 	}
-
-	/* Wait for the server to say the RDMA Write is complete. */
+*/
+	/* Wait for the server to say the RDMA Write is complete.
 	sem_wait(&cb->sem);
 	if (cb->state != RDMA_WRITE_COMPLETE) {
 		fprintf(stderr, "wait for RDMA_WRITE_COMPLETE state %d\n",
 			cb->state);
 		ret = -1;
 		break;
-	}
- 
-        if ( currLen < 0 ) {
+	} */
+	
+	currLen = cb->size + sizeof( iperf_rdma_info );
+	
+/*        if ( currLen < 0 ) {
             WARN_errno( currLen < 0, "write2" ); 
-            break; 
-        }
+            break;
+        }*/
 	totLen += currLen;
-
+	
 	if(mSettings->mInterval > 0) {
     	    gettimeofday( &(reportstruct->packetTime), NULL );
             reportstruct->packetLen = currLen;

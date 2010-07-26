@@ -171,6 +171,15 @@ struct rdma_cb {
 
 /* prototype - defined in rdma.c*/
 
+int iperf_cma_event_handler(struct rdma_cm_id *cma_id,
+				    struct rdma_cm_event *event);
+
+void *cm_thread(void *arg);
+
+int iperf_cq_event_handler(struct rdma_cb *cb);
+
+void *cq_thread(void *arg);
+
 int rdma_init( thread_Settings *rdma_thr );
 
 
