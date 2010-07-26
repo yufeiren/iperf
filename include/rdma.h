@@ -61,9 +61,9 @@ extern "C" {
 #include <rdma/rdma_cma.h>
 #include <infiniband/arch.h>
 
-const int rdma_debug = 0;
-#define DEBUG_LOG if (rdma_debug) printf
-// #define DEBUG_LOG printf
+// const int rdma_debug = 0;
+// #define DEBUG_LOG if (rdma_debug) printf
+#define DEBUG_LOG printf
 
 /*
  * riperf data transfer type:
