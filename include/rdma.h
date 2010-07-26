@@ -62,7 +62,8 @@ extern "C" {
 #include <infiniband/arch.h>
 
 int debug = 0;
-#define DEBUG_LOG if (debug) printf
+// #define DEBUG_LOG if (debug) printf
+#define DEBUG_LOG printf
 
 /*
  * riperf data transfer type:
