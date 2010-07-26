@@ -213,7 +213,7 @@ void Client::RunRDMA( void ) {
 
     // struct rdma_cb* cb = GetRdmaCB;mSettings->cb;
     struct rdma_cb* cb = NULL;
-    cb = mSettings->cb;
+//    cb = mSettings->cb;
     
     struct ibv_send_wr* bad_wr;
     
@@ -566,7 +566,7 @@ void Client::ConnectRDMA( ) {
     assert( mSettings->inHostname != NULL );
 
     struct rdma_cb* cb = NULL;
-    cb = mSettings->cb;
+//    cb = mSettings->cb;
     
     // create an internet socket
     int type = ( isUDP( mSettings )  ?  SOCK_DGRAM : SOCK_STREAM);
