@@ -374,7 +374,7 @@ int iperf_setup_qp(struct rdma_cb *cb, struct rdma_cm_id *cm_id)
 		goto err3;
 	}
 
-	ret = rdma_create_qp(cb);
+	ret = iperf_create_qp(cb);
 	if (ret) {
 		perror("rdma_create_qp");
 		goto err3;
