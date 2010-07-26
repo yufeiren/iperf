@@ -712,6 +712,6 @@ void Client::write_UDP_FIN( ) {
 // end write_UDP_FIN 
 
 
-struct rdma_cb* Client::GetRdmaCB( ) {
-	return mSettings->cb;
+void GetRdmaCB( struct rdma_cb *cb ) {
+	cb = mSettings->cb;
 }
