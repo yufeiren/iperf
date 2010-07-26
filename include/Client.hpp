@@ -93,6 +93,7 @@ public:
 
 protected:
     thread_Settings *mSettings;
+    rdma_cb *mCb;
     char* mBuf;
     Timestamp mEndTime;
     Timestamp lastPacketTime;

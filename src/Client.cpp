@@ -212,8 +212,6 @@ void Client::RunRDMA( void ) {
     char* readAt = mBuf;
 
     // struct rdma_cb* cb = GetRdmaCB;mSettings->cb;
-    struct rdma_cb* cb = NULL;
-//    cb = mSettings->cb;
     
     struct ibv_send_wr* bad_wr;
     
@@ -251,17 +249,17 @@ void Client::RunRDMA( void ) {
         // perform RDMA read or write
 //        currLen = write( mSettings->mSock, mBuf, mSettings->mBufLen );
 
-	cb->state = RDMA_READ_ADV;
+	mCb->state = RDMA_READ_ADV;
 
-	err = ibv_post_send(cb->qp, &cb->sq_wr, &bad_wr);
+	err = ibv_post_send(mCb->qp, &mCb->sq_wr, &bad_wr);
 	if (err) {
 		fprintf(stderr, "post send error %d\n", err);
 		break;
 	}
 
 	/* Wait for server to ACK read complete */
-	sem_wait(&cb->sem);
-	if (cb->state != RDMA_WRITE_ADV) {
+	sem_wait(&mCb->sem);
+	if (mCb->state != RDMA_WRITE_ADV) {
 		fprintf(stderr, "wait for RDMA_WRITE_ADV state %d\n",
 			cb->state);
 		err = -1;
@@ -284,7 +282,7 @@ void Client::RunRDMA( void ) {
 		break;
 	} */
 	
-	currLen = cb->size + sizeof( iperf_rdma_info );
+	currLen = mCb->size + sizeof( iperf_rdma_info );
 	
 /*        if ( currLen < 0 ) {
             WARN_errno( currLen < 0, "write2" ); 
@@ -565,9 +563,6 @@ void Client::ConnectRDMA( ) {
 
     assert( mSettings->inHostname != NULL );
 
-    struct rdma_cb* cb = NULL;
-//    cb = mSettings->cb;
-    
     // create an internet socket
     int type = ( isUDP( mSettings )  ?  SOCK_DGRAM : SOCK_STREAM);
 
@@ -605,9 +600,9 @@ void Client::ConnectRDMA( ) {
 */
 
 	if (domain == AF_INET)
-		((struct sockaddr_in *) &cb->sin)->sin_port = cb->port;
+		((struct sockaddr_in *) &cb->sin)->sin_port = mCb->port;
 	else
-		((struct sockaddr_in6 *) &cb->sin)->sin6_port = cb->port;
+		((struct sockaddr_in6 *) &cb->sin)->sin6_port = mCb->port;
 
 	rc = rdma_resolve_addr(cb->cm_id, NULL, \
 		(struct sockaddr *) &mSettings->peer, 2000);
@@ -616,8 +611,8 @@ void Client::ConnectRDMA( ) {
 		return;
 	}
 
-	sem_wait(&cb->sem);
-	if (cb->state != ROUTE_RESOLVED) {
+	sem_wait(&mCb->sem);
+	if (mCb->state != ROUTE_RESOLVED) {
 		fprintf(stderr, "waiting for addr/route resolution state %d\n",
 			cb->state);
 		return;
@@ -625,27 +620,27 @@ void Client::ConnectRDMA( ) {
 
 	fprintf(stdout, "rdma_resolve_addr - rdma_resolve_route successful\n");
 	
-	rc = iperf_setup_qp(cb, cb->cm_id);
+	rc = iperf_setup_qp(mCb, mCb->cm_id);
 	if (rc) {
 		fprintf(stderr, "iperf_setup_qp failed: %d\n", rc);
 		return;
 	}
 	
-	rc = iperf_setup_buffers(cb);
+	rc = iperf_setup_buffers(mCb);
 	if (rc) {
 		fprintf(stderr, "rdma_setup_buffers failed: %d\n", rc);
 		goto err1;
 	}
 	
-	rc = ibv_post_recv(cb->qp, &cb->rq_wr, &bad_wr);
+	rc = ibv_post_recv(mCb->qp, &mCb->rq_wr, &bad_wr);
 	if (rc) {
 		fprintf(stderr, "ibv_post_recv failed: %d\n", rc);
 		goto err2;
 	}
 
-	pthread_create(&cb->cqthread, NULL, cq_thread, cb);
+	pthread_create(&mCb->cqthread, NULL, cq_thread, mCb);
 
-	rc = rdma_connect_client(cb);
+	rc = rdma_connect_client(mCb);
 	if (rc) {
 		fprintf(stderr, "connect error %d\n", rc);
 		goto err2;
@@ -711,4 +706,3 @@ void Client::write_UDP_FIN( ) {
     fprintf( stderr, warn_no_ack, mSettings->mSock, count ); 
 } 
 // end write_UDP_FIN 
-

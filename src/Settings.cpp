@@ -234,6 +234,17 @@ void Settings_Initialize( thread_Settings *main ) {
 
 } // end Settings
 
+void Settings_Initialize_Cb( rdma_cb* main_cb )
+{
+	memset(main_cb, 0, sizeof(*main_cb));
+	main_cb->server = -1;
+	main_cb->state = IDLE;
+	main_cb->size = 64;
+	main_cb->sin.ss_family = PF_INET;
+	main_cb->port = htons(8402);
+	sem_init(&main_cb->sem, 0, 0);
+}
+
 void Settings_Copy( thread_Settings *from, thread_Settings **into ) {
     *into = new thread_Settings;
     memcpy( *into, from, sizeof(thread_Settings) );

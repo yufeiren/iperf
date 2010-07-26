@@ -203,6 +203,12 @@ int main( int argc, char **argv ) {
         if ( ext_gSettings->mThreadMode == kMode_RDMA_Server
 	    || ext_gSettings->mThreadMode == kMode_RDMA_Client ) {
 //	    rdma_init( ext_gSettings->cb );
+	    // Allocate the "global" settings
+	    rdma_cb* cb = new rdma_cb;
+	
+	    // Initialize settings to defaults
+	    Settings_Initialize_Cb( cb );
+	    
 	    rdma_init( cb );
 	}
 

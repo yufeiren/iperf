@@ -293,20 +293,12 @@ void *cq_thread(void *arg)
 int rdma_init( struct rdma_cb *cb ) {
 	int ret = 0;
 
-	cb = malloc(sizeof(*cb));
+/*	cb = malloc(sizeof(*cb));
 	if (!cb)
 		return -ENOMEM;
 
 	// rdma_thr->cb = cb;
-	
-	memset(cb, 0, sizeof(*cb));
-	cb->server = -1;
-	cb->state = IDLE;
-	cb->size = 64;
-	cb->sin.ss_family = PF_INET;
-	cb->port = htons(8402);
-	sem_init(&cb->sem, 0, 0);
-
+*/
 	cb->cm_channel = rdma_create_event_channel();
 	if (!cb->cm_channel) {
 		perror("rdma_create_event_channel");

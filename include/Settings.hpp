@@ -180,8 +180,6 @@ typedef struct thread_Settings {
 #if defined( HAVE_WIN32_THREAD )
     HANDLE mHandle;
 #endif
-    // rdma control block
-    struct rmda_cb *cb;
 } thread_Settings;
 
 /*
@@ -396,6 +394,9 @@ typedef struct server_hdr {
 
     // set to defaults
     void Settings_Initialize( thread_Settings* main );
+
+    // set rdma control block to defaults
+    void Settings_Initialize_Cb( rdma_cb* main_cb );
 
     // copy structure
     void Settings_Copy( thread_Settings* from, thread_Settings** into );
