@@ -484,7 +484,7 @@ int iperf_setup_buffers(struct rdma_cb *cb)
 		}
 	}
 
-	rdma_setup_wr(cb);
+	iperf_setup_wr(cb);
 	DEBUG_LOG("allocated & registered buffers...\n");
 	return 0;
 
