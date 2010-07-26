@@ -89,7 +89,7 @@ public:
     void ConnectRDMA( );
     
     // get control block address
-    void GetRdmaCB( struct rdma_cb *cb );
+    void GetRdmaCB( struct rdma_cb **cb );
 
 protected:
     thread_Settings *mSettings;
