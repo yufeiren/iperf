@@ -211,7 +211,9 @@ void Client::RunRDMA( void ) {
     char* readAt = mBuf;
 
     struct rdma_cb *cb = mSettings->cb;
-
+    
+    struct ibv_send_wr *bad_wr;
+    
     // Indicates if the stream is readable 
     bool canRead = true, mMode_Time = isModeTime( mSettings ); 
 
