@@ -138,6 +138,9 @@
 /** Added for daemonizing the process */
     #include <syslog.h>
 
+/** Added for semaphore */
+    #include <semaphore.h>
+
 SPECIAL_OSF1_EXTERN_C_START
     #include <netdb.h>
 SPECIAL_OSF1_EXTERN_C_STOP
