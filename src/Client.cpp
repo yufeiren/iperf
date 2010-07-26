@@ -261,7 +261,7 @@ void Client::RunRDMA( void ) {
 	sem_wait(&mCb->sem);
 	if (mCb->state != RDMA_WRITE_ADV) {
 		fprintf(stderr, "wait for RDMA_WRITE_ADV state %d\n",
-			cb->state);
+			mCb->state);
 		err = -1;
 		break;
 	}
@@ -600,11 +600,11 @@ void Client::ConnectRDMA( ) {
 */
 
 	if (domain == AF_INET)
-		((struct sockaddr_in *) &cb->sin)->sin_port = mCb->port;
+		((struct sockaddr_in *) &mCb->sin)->sin_port = mCb->port;
 	else
-		((struct sockaddr_in6 *) &cb->sin)->sin6_port = mCb->port;
+		((struct sockaddr_in6 *) &mCb->sin)->sin6_port = mCb->port;
 
-	rc = rdma_resolve_addr(cb->cm_id, NULL, \
+	rc = rdma_resolve_addr(mCb->cm_id, NULL, \
 		(struct sockaddr *) &mSettings->peer, 2000);
 	if (rc) {
 		perror("rdma_resolve_addr");
@@ -614,7 +614,7 @@ void Client::ConnectRDMA( ) {
 	sem_wait(&mCb->sem);
 	if (mCb->state != ROUTE_RESOLVED) {
 		fprintf(stderr, "waiting for addr/route resolution state %d\n",
-			cb->state);
+			mCb->state);
 		return;
 	}
 
@@ -653,9 +653,9 @@ void Client::ConnectRDMA( ) {
 //	rping_test_client(cb);
 //	rdma_disconnect(cb->cm_id);
 err2:
-	iperf_free_buffers(cb);
+	iperf_free_buffers(mCb);
 err1:
-	iperf_free_qp(cb);
+	iperf_free_qp(mCb);
 
 } // end ConnectRDMA
 
