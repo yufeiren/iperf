@@ -197,10 +197,13 @@ int main( int argc, char **argv ) {
             client_init( ext_gSettings );
         }
         
+        rdma_cb* cb = new rdma_cb;
+        
         // initialize rdma resources
         if ( ext_gSettings->mThreadMode == kMode_RDMA_Server
 	    || ext_gSettings->mThreadMode == kMode_RDMA_Client ) {
-	    rdma_init( ext_gSettings->cb );
+//	    rdma_init( ext_gSettings->cb );
+	    rdma_init( cb );
 	}
 
 #ifdef HAVE_THREAD
