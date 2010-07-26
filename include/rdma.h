@@ -131,12 +131,12 @@ struct rdma_cb {
 
 	struct ibv_recv_wr rq_wr;	/* recv work request record */
 	struct ibv_sge recv_sgl;	/* recv single SGE */
-	struct rping_rdma_info recv_buf;/* malloc'd buffer */
+	struct iperf_rdma_info recv_buf;/* malloc'd buffer */
 	struct ibv_mr *recv_mr;		/* MR associated with this buffer */
 
 	struct ibv_send_wr sq_wr;	/* send work request record */
 	struct ibv_sge send_sgl;
-	struct rping_rdma_info send_buf;/* single send buf */
+	struct iperf_rdma_info send_buf;/* single send buf */
 	struct ibv_mr *send_mr;
 
 	struct ibv_send_wr rdma_sq_wr;	/* rdma work request record */
