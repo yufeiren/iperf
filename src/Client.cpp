@@ -210,7 +210,8 @@ void Client::RunRDMA( void ) {
 
     char* readAt = mBuf;
 
-    struct rdma_cb* cb = mSettings->cb;
+    // struct rdma_cb* cb = GetRdmaCB;mSettings->cb;
+    struct rdma_cb* cb = GetRdmaCB( );
     
     struct ibv_send_wr* bad_wr;
     
@@ -558,12 +559,12 @@ void Client::Connect( ) {
 void Client::ConnectRDMA( ) {
     int rc;
     struct rdma_cb *cb;
-    struct ibv_send_wr* bad_wr;
+    struct ibv_recv_wr* bad_wr;
     SockAddr_remoteAddr( mSettings );
 
     assert( mSettings->inHostname != NULL );
 
-    cb = mSettings->cb;
+    cb = GetRdmaCB( );
     
     // create an internet socket
     int type = ( isUDP( mSettings )  ?  SOCK_DGRAM : SOCK_STREAM);
@@ -708,3 +709,8 @@ void Client::write_UDP_FIN( ) {
     fprintf( stderr, warn_no_ack, mSettings->mSock, count ); 
 } 
 // end write_UDP_FIN 
+
+
+struct rdma_cb* Client::GetRdmaCB( ) {
+	return mSettings->cb;
+}

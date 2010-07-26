@@ -87,6 +87,9 @@ public:
     
     // client connect rdma
     void ConnectRDMA( );
+    
+    // get control block address
+    struct rdma_cb* GetRdmaCB( );
 
 protected:
     thread_Settings *mSettings;
