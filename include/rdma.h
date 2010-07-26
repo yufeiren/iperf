@@ -61,8 +61,6 @@ extern "C" {
 #include <rdma/rdma_cma.h>
 #include <infiniband/arch.h>
 
-#include "Settings.hpp"
-
 static int debug = 0;
 #define DEBUG_LOG if (debug) printf
 
@@ -182,7 +180,7 @@ int iperf_cq_event_handler(struct rdma_cb *cb);
 
 void *cq_thread(void *arg);
 
-int rdma_init( thread_Settings *rdma_thr );
+int rdma_init( struct rdma_cb *cb );
 
 
 int iperf_create_qp(struct rdma_cb *cb);

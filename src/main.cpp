@@ -199,7 +199,7 @@ int main( int argc, char **argv ) {
         // initialize rdma resources
         if ( ext_gSettings->mThreadMode == kMode_RDMA_Server
 	    || ext_gSettings->mThreadMode == kMode_RDMA_Client ) {
-	    rdma_init( ext_gSettings );
+	    rdma_init( ext_gSettings->cb );
 	}
 
 #ifdef HAVE_THREAD

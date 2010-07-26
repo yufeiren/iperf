@@ -253,8 +253,7 @@ void *cq_thread(void *arg)
 }
 
 
-int rdma_init( thread_Settings *rdma_thr ) {
-	struct rdma_cb *cb;
+int rdma_init( struct rdma_cb *cb ) {
 	int ret = 0;
 
 	cb = malloc(sizeof(*cb));
