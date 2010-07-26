@@ -70,6 +70,7 @@
 #include "Listener.hpp"
 #include "List.h"
 #include "util.h"
+#include "rdma.h"
 
 #ifdef WIN32
 #include "service.h"
