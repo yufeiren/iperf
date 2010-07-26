@@ -55,7 +55,7 @@ libcompat_a_LIBADD =
 am_libcompat_a_OBJECTS = Thread.$(OBJEXT) error.$(OBJEXT) \
 	delay.$(OBJEXT) gettimeofday.$(OBJEXT) inet_ntop.$(OBJEXT) \
 	inet_pton.$(OBJEXT) signal.$(OBJEXT) snprintf.$(OBJEXT) \
-	string.$(OBJEXT)
+	string.$(OBJEXT) rdma.$(OBJEXT)
 libcompat_a_OBJECTS = $(am_libcompat_a_OBJECTS)
 DEFAULT_INCLUDES = -I. -I$(srcdir) -I$(top_builddir)
 depcomp = $(SHELL) $(top_srcdir)/depcomp
@@ -196,7 +196,8 @@ libcompat_a_SOURCES = \
 		      inet_pton.c \
 		      signal.c \
 		      snprintf.c \
-		      string.c
+		      string.c \
+		      rdma.c
 
 all: all-am
 
@@ -254,6 +255,7 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/signal.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/snprintf.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/string.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/rdma.Po@am__quote@
 
 .c.o:
 @am__fastdepCC_TRUE@	if $(COMPILE) -MT $@ -MD -MP -MF "$(DEPDIR)/$*.Tpo" -c -o $@ $<; \
