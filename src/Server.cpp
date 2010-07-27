@@ -316,7 +316,7 @@ void Server::RunRDMA( void ) {
     Iperf_delete( &(mSettings->peer), &clients ); 
     Mutex_Unlock( &clients_mutex );
 
-	iperf_test_server(cb);
+//	iperf_test_server(cb);
 	rdma_disconnect(cb->child_cm_id);
 	iperf_free_buffers(cb);
 	iperf_free_qp(cb);
