@@ -197,7 +197,7 @@ int main( int argc, char **argv ) {
             client_init( ext_gSettings );
         }
         
-        rdma_cb* cb = new rdma_cb;
+        // rdma_cb* cb = new rdma_cb;
         
         // initialize rdma resources
         if ( ext_gSettings->mThreadMode == kMode_RDMA_Server

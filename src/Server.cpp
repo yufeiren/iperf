@@ -171,6 +171,176 @@ void Server::Run( void ) {
 } 
 // end Recv 
 
+void Server::RunRDMA( void ) {
+	rdma_cb *cb = NULL;
+    
+	struct ibv_recv_wr *bad_wr;
+	int ret;
+	
+    long currLen; 
+    max_size_t totLen = 0;
+    struct UDP_datagram* mBuf_UDP  = (struct UDP_datagram*) mBuf; 
+
+    ReportStruct *reportstruct = NULL;
+
+    reportstruct = new ReportStruct;
+    
+    Rdma_Settings_Copy(mCb, &cb);
+
+	ret = iperf_setup_qp(cb, cb->child_cm_id);
+	if (ret) {
+		fprintf(stderr, "setup_qp failed: %d\n", ret);
+		goto err0;
+	}
+
+	ret = iperf_setup_buffers(cb);
+	if (ret) {
+		fprintf(stderr, "rping_setup_buffers failed: %d\n", ret);
+		goto err1;
+	}
+
+	ret = ibv_post_recv(cb->qp, &cb->rq_wr, &bad_wr);
+	if (ret) {
+		fprintf(stderr, "ibv_post_recv failed: %d\n", ret);
+		goto err2;
+	}
+
+	pthread_create(&cb->cqthread, NULL, cq_thread, cb);
+
+	ret = iperf_accept(cb);
+	if (ret) {
+		fprintf(stderr, "connect error %d\n", ret);
+		goto err3;
+	}
+	
+    if ( reportstruct != NULL ) {
+        reportstruct->packetID = 0;
+        mSettings->reporthdr = InitReport( mSettings );
+        do {
+            // perform read 
+//            currLen = recv( mSettings->mSock, mBuf, mSettings->mBufLen, 0 ); 
+            
+            sem_wait(&cb->sem);
+		if (cb->state != RDMA_READ_ADV) {
+			fprintf(stderr, "wait for RDMA_READ_ADV state %d\n",
+				cb->state);
+			ret = -1;
+			break;
+		}
+
+		DEBUG_LOG("server received sink adv\n");
+
+		/* Issue RDMA Read. */
+		cb->rdma_sq_wr.opcode = IBV_WR_RDMA_READ;
+		cb->rdma_sq_wr.wr.rdma.rkey = cb->remote_rkey;
+		cb->rdma_sq_wr.wr.rdma.remote_addr = cb->remote_addr;
+		cb->rdma_sq_wr.sg_list->length = cb->remote_len;
+
+		ret = ibv_post_send(cb->qp, &cb->rdma_sq_wr, &bad_wr);
+		if (ret) {
+			fprintf(stderr, "post send error %d\n", ret);
+			break;
+		}
+		DEBUG_LOG("server posted rdma read req \n");
+
+		/* Wait for read completion */
+		sem_wait(&cb->sem);
+		if (cb->state != RDMA_READ_COMPLETE) {
+			fprintf(stderr, "wait for RDMA_READ_COMPLETE state %d\n",
+				cb->state);
+			ret = -1;
+			break;
+		}
+		DEBUG_LOG("server received read complete\n");
+
+		/* Display data in recv buf */
+		if (cb->verbose)
+			printf("server ping data: %s\n", cb->rdma_buf);
+
+            currLen = cb->remote_len;
+            DEBUG_LOG("server: RDMA read %ld byte this time\n", currLen);
+            
+            if ( isUDP( mSettings ) ) {
+                // read the datagram ID and sentTime out of the buffer 
+                reportstruct->packetID = ntohl( mBuf_UDP->id ); 
+                reportstruct->sentTime.tv_sec = ntohl( mBuf_UDP->tv_sec  );
+                reportstruct->sentTime.tv_usec = ntohl( mBuf_UDP->tv_usec ); 
+		reportstruct->packetLen = currLen;
+		gettimeofday( &(reportstruct->packetTime), NULL );
+            } else {
+		totLen += currLen;
+	    }
+        
+            // terminate when datagram begins with negative index 
+            // the datagram ID should be correct, just negated 
+            if ( reportstruct->packetID < 0 ) {
+                reportstruct->packetID = -reportstruct->packetID;
+                currLen = -1; 
+            }
+
+	    if ( isUDP (mSettings)) {
+		ReportPacket( mSettings->reporthdr, reportstruct );
+            } else if ( !isUDP (mSettings) && mSettings->mInterval > 0) {
+                reportstruct->packetLen = currLen;
+                gettimeofday( &(reportstruct->packetTime), NULL );
+                ReportPacket( mSettings->reporthdr, reportstruct );
+            }
+
+
+
+        } while ( currLen > 0 ); 
+        
+        
+        // stop timing 
+        gettimeofday( &(reportstruct->packetTime), NULL );
+        
+	if ( !isUDP (mSettings)) {
+		if(0.0 == mSettings->mInterval) {
+                        reportstruct->packetLen = totLen;
+                }
+		ReportPacket( mSettings->reporthdr, reportstruct );
+	}
+        CloseReport( mSettings->reporthdr, reportstruct );
+        
+        // send a acknowledgement back only if we're NOT receiving multicast 
+        if ( isUDP( mSettings ) && !isMulticast( mSettings ) ) {
+            // send back an acknowledgement of the terminating datagram 
+            write_UDP_AckFIN( ); 
+        }
+    } else {
+        FAIL(1, "Out of memory! Closing server thread\n", mSettings);
+    }
+
+    Mutex_Lock( &clients_mutex );     
+    Iperf_delete( &(mSettings->peer), &clients ); 
+    Mutex_Unlock( &clients_mutex );
+
+	iperf_test_server(cb);
+	rdma_disconnect(cb->child_cm_id);
+	iperf_free_buffers(cb);
+	iperf_free_qp(cb);
+	pthread_cancel(cb->cqthread);
+	pthread_join(cb->cqthread, NULL);
+	rdma_destroy_id(cb->child_cm_id);
+	delete cb;
+
+
+    DELETE_PTR( reportstruct );
+    EndReport( mSettings->reporthdr );
+    
+    return;
+err3:
+	pthread_cancel(cb->cqthread);
+	pthread_join(cb->cqthread, NULL);
+err2:
+	iperf_free_buffers(cb);
+err1:
+	iperf_free_qp(cb);
+err0:
+	delete cb;
+	return;
+} 
+
 /* ------------------------------------------------------------------- 
  * Send an AckFIN (a datagram acknowledging a FIN) on the socket, 
  * then select on the socket for some time. If additional datagrams 

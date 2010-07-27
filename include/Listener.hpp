@@ -70,17 +70,23 @@ public:
 
     // accepts connections and starts Servers
     void Run( void );
+    
+    void RunRDMA( void );
 
     // Starts the Servers as a daemon 
     void runAsDaemon( const char *, int );
 
     void Listen( );
+    
+    void ListenRDMA( );
 
     void McastJoin( );
 
     void McastSetTTL( int val );
 
     void Accept( thread_Settings *server );
+    
+    void AcceptRDMA( thread_Settings *server );
 
     void UDPSingleServer ();
 
@@ -89,6 +95,7 @@ protected:
     char* mBuf;
     thread_Settings *mSettings;
     thread_Settings *server;
+    rdma_cb *cb;
 
 }; // end class Listener
 

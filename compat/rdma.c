@@ -558,3 +558,38 @@ int rdma_connect_client(struct rdma_cb *cb)
 	DEBUG_LOG("rmda_connect successful\n");
 	return 0;
 }
+
+
+void Rdma_Settings_Copy( rdma_cb* from, rdma_cb** into )
+{
+	*into = new rdma_cb;
+	memcpy( *into, from, sizeof(rdma_cb) );
+	
+	(*into)->child_cm_id->context = *into;
+}
+
+int iperf_accept(struct rdma_cb *cb)
+{
+	struct rdma_conn_param conn_param;
+	int ret;
+
+	DEBUG_LOG("accepting client connection request\n");
+
+	memset(&conn_param, 0, sizeof conn_param);
+	conn_param.responder_resources = 1;
+	conn_param.initiator_depth = 1;
+
+	ret = rdma_accept(cb->child_cm_id, &conn_param);
+	if (ret) {
+		perror("rdma_accept");
+		return ret;
+	}
+
+	sem_wait(&cb->sem);
+	if (cb->state == ERROR) {
+		fprintf(stderr, "wait for CONNECTED state %d\n", cb->state);
+		return -1;
+	}
+	return 0;
+}
+

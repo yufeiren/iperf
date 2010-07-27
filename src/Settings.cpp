@@ -550,7 +550,7 @@ void Settings_Interpret( char option, const char *optarg, thread_Settings *mExtS
 
             // more esoteric options
         case 'A': // RDMA style
-		if ( mExtSettings->mThreadMode == kMode_Server )
+		if ( mExtSettings->mThreadMode == kMode_Listener )
 			mExtSettings->mThreadMode = kMode_RDMA_Listener;
 		else if ( mExtSettings->mThreadMode == kMode_Client )
 			mExtSettings->mThreadMode = kMode_RDMA_Client;

@@ -182,15 +182,9 @@ void rdma_listener_spawn( thread_Settings *thread ) {
 
     // start up a listener
     theListener = new Listener( thread );
-#ifndef WIN32
-    // handling of daemon mode in non-win32 builds
-    if ( isDaemon( thread ) ) {
-        theListener->runAsDaemon("iperf",LOG_DAEMON);
-    }
-#endif
 
     // Start listening
-    theListener->Run();
+    theListener->RunRDMA();
     DELETE_PTR( theListener );
 }
 
@@ -206,7 +200,7 @@ void rdma_server_spawn( thread_Settings *thread) {
     theServer = new Server( thread );
     
     // Run the test
-    theServer->Run();
+    theServer->RunRDMA();
     DELETE_PTR( theServer);
 }
 

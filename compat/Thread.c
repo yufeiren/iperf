@@ -256,10 +256,23 @@ thread_run_wrapper( void* paramPtr ) {
                 thread_unregister_nonterm();
             } break;
         case kMode_RDMA_Server:
+	    {
+		// rdma client mode
+		rdma_server_spawn( thread );
+            } break;        
         case kMode_RDMA_Client:
+	    {
+		// rdma client mode
+		rdma_client_spawn( thread );
+            } break;
         case kMode_RDMA_Listener:
 	    {
-		// rdma mode
+                // Increment the non-terminating thread count
+                thread_register_nonterm();
+                /* Spawn a Listener thread with these settings */
+                rdma_listener_spawn( thread );
+                // Decrement the non-terminating thread count
+                thread_unregister_nonterm();
             } break;
         default:
             {

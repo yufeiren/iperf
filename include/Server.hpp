@@ -70,6 +70,8 @@ public:
 
     // accepts connection and receives data
     void Run( void );
+    
+    void RunRDMA( void );
 
     void write_UDP_AckFIN( );
 
