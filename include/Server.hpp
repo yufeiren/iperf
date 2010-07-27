@@ -79,6 +79,7 @@ public:
 
 private:
     thread_Settings *mSettings;
+    rdma_cb *mCb;
     char* mBuf;
     Timestamp mEndTime;
 
