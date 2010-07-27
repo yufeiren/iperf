@@ -166,7 +166,7 @@ int main( int argc, char **argv ) {
     Settings_ParseEnvironment( ext_gSettings );
     // read settings from command-line parameters
     Settings_ParseCommandLine( argc, argv, ext_gSettings );
-
+printf("after Settings_ParseCommandLine\n");
     // Check for either having specified client or server
     if ( ext_gSettings->mThreadMode == kMode_Client 
          || ext_gSettings->mThreadMode == kMode_Listener 
@@ -208,8 +208,9 @@ int main( int argc, char **argv ) {
 	
 	    // Initialize settings to defaults
 	    Settings_Initialize_Cb( cb );
-	    
+printf("before rdma_init\n");
 	    rdma_init( cb );
+printf("after rdma_init\n");
 	}
 
 #ifdef HAVE_THREAD
