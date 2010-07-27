@@ -174,7 +174,8 @@ void Server::Run( void ) {
 void Server::RunRDMA( void ) {
 	rdma_cb *cb = NULL;
     
-	struct ibv_recv_wr *bad_wr;
+	struct ibv_send_wr *bad_send_wr;
+	struct ibv_recv_wr *bad_recv_wr;
 	int ret;
 	
     long currLen; 
@@ -199,7 +200,7 @@ void Server::RunRDMA( void ) {
 		goto err1;
 	}
 
-	ret = ibv_post_recv(cb->qp, &cb->rq_wr, &bad_wr);
+	ret = ibv_post_recv(cb->qp, &cb->rq_wr, &bad_recv_wr);
 	if (ret) {
 		fprintf(stderr, "ibv_post_recv failed: %d\n", ret);
 		goto err2;
@@ -236,7 +237,7 @@ void Server::RunRDMA( void ) {
 		cb->rdma_sq_wr.wr.rdma.remote_addr = cb->remote_addr;
 		cb->rdma_sq_wr.sg_list->length = cb->remote_len;
 
-		ret = ibv_post_send(cb->qp, &cb->rdma_sq_wr, &bad_wr);
+		ret = ibv_post_send(cb->qp, &cb->rdma_sq_wr, &bad_send_wr);
 		if (ret) {
 			fprintf(stderr, "post send error %d\n", ret);
 			break;
