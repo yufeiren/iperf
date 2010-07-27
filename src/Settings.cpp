@@ -270,6 +270,14 @@ void Settings_Copy( thread_Settings *from, thread_Settings **into ) {
     (*into)->runNow = NULL;
 }
 
+void Rdma_Settings_Copy( rdma_cb* from, rdma_cb** into )
+{
+	*into = new rdma_cb;
+	memcpy( *into, from, sizeof(rdma_cb) );
+	
+	(*into)->child_cm_id->context = *into;
+}
+
 /* -------------------------------------------------------------------
  * Delete memory: Does not clean up open file pointers or ptr_parents
  * ------------------------------------------------------------------- */

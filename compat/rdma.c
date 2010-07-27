@@ -560,14 +560,6 @@ int rdma_connect_client(struct rdma_cb *cb)
 }
 
 
-void Rdma_Settings_Copy( rdma_cb* from, rdma_cb** into )
-{
-	*into = new rdma_cb;
-	memcpy( *into, from, sizeof(rdma_cb) );
-	
-	(*into)->child_cm_id->context = *into;
-}
-
 int iperf_accept(struct rdma_cb *cb)
 {
 	struct rdma_conn_param conn_param;

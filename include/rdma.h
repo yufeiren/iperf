@@ -200,9 +200,6 @@ int rdma_connect_client(struct rdma_cb *cb);
 
 int iperf_accept(struct rdma_cb *cb);
 
-// copy rdma structure
-void Rdma_Settings_Copy( rdma_cb* from, rdma_cb** into );
-
 #ifdef __cplusplus
 } /* end extern "C" */
 #endif
