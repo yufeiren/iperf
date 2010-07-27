@@ -106,8 +106,6 @@ typedef int nthread_t;
     // start or stop a thread executing
     void thread_start( struct thread_Settings* thread );
     void thread_stop( struct thread_Settings* thread );
-//    void thread_start_rdma( struct thread_Settings* thread, \
-//    				struct rdma_cb* cb );
 
     /* wait for this or all threads to complete */
     void thread_joinall( void );

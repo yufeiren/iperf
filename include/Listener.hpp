@@ -95,7 +95,7 @@ protected:
     char* mBuf;
     thread_Settings *mSettings;
     thread_Settings *server;
-    rdma_cb *cb;
+    rdma_cb *mCb;
 
 }; // end class Listener
 
