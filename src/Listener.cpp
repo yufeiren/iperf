@@ -109,6 +109,8 @@ Listener::Listener( thread_Settings *inSettings ) {
 	// port
 	mCb->port = mSettings->mPort;
 	DPRINTF(("listening port is %d\n", mCb->port));
+	
+	mCb->server = 1;
 	}
 	
     // open listening socket 

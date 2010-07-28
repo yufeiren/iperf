@@ -98,6 +98,8 @@ Client::Client( thread_Settings *inSettings ) {
 	// port
 	mCb->port = mSettings->mPort;
 	DPRINTF(("connecting port is %d\n", mCb->port));
+	
+	mCb->server = 0;
 	}
 
     // connect TCP/UDP
