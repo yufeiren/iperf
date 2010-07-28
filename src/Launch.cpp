@@ -182,7 +182,6 @@ void rdma_listener_spawn( thread_Settings *thread ) {
 
     // start up a listener
     DPRINTF(("before new Listener\n"));
-    printf("before new Listener\n");
     theListener = new Listener( thread );
     DPRINTF(("after new Listener\n"));
 

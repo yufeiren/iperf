@@ -463,20 +463,24 @@ void Listener::ListenRDMA( ) {
 		((struct sockaddr_in *) &mCb->sin)->sin_port = mCb->port;
 	else
 		((struct sockaddr_in6 *) &mCb->sin)->sin6_port = mCb->port;
-
+	
+	DPRINTF(("before rdma_bind_addr\n"));
 	rc = rdma_bind_addr(mCb->cm_id, (struct sockaddr *) &mCb->sin);
 	if (rc) {
 		perror("rdma_bind_addr");
 		return;
 	}
 	DEBUG_LOG("rdma_bind_addr successful\n");
+	DPRINTF(("rdma_bind_addr successful\n"));
 
 	DEBUG_LOG("rdma_listen\n");
+	DPRINTF(("before rdma_listen\n"));
 	rc = rdma_listen(mCb->cm_id, 3);
 	if (rc) {
 		perror("rdma_listen");
 		return;
 	}
+	DPRINTF(("rdma_listen successful\n"));
 	
 /*	sem_wait(&mCb->sem);
 	if (mCb->state != CONNECT_REQUEST) {
