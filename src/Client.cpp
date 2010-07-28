@@ -84,10 +84,26 @@ Client::Client( thread_Settings *inSettings ) {
         }
     }
 
+	mCb = new rdma_cb;
+	Settings_Initialize_Cb( mCb );
+	rdma_init( mCb );
+
+	{
+	// addr
+/*	if ( mSettings->mThreadMode == kMode_RDMA_Listener)
+		memcpy( &mCb->sin, &mSettings->local, sizeof(iperf_sockaddr));
+	else if ( mSettings->mThreadMode == kMode_RDMA_Client)
+		memcpy( &mCb->sin, &mSettings->peer, sizeof(iperf_sockaddr));
+*/
+	// port
+	mCb->port = mSettings->mPort;
+	DPRINTF(("connecting port is %d\n", mCb->port));
+	}
+
     // connect TCP/UDP
     if ( mSettings->mThreadMode == kMode_Client )
     	Connect( );
-    else if ( mSettings->mThreadMode == kMode_RDMA_Client )
+    else if ( mSettings->mThreadMode == kMode_RDMA_Client ) // connect RDMA
     	ConnectRDMA( );
     else
     	fprintf(stderr, "err thread mode: %d\n", mSettings->mThreadMode);
@@ -600,9 +616,9 @@ void Client::ConnectRDMA( ) {
 */
 
 	if (domain == AF_INET)
-		((struct sockaddr_in *) &mCb->sin)->sin_port = mCb->port;
+		((struct sockaddr_in *) &mCb->sin)->sin_port = htons(mCb->port);
 	else
-		((struct sockaddr_in6 *) &mCb->sin)->sin6_port = mCb->port;
+		((struct sockaddr_in6 *) &mCb->sin)->sin6_port = htons(mCb->port);
 
 	rc = rdma_resolve_addr(mCb->cm_id, NULL, \
 		(struct sockaddr *) &mSettings->peer, 2000);

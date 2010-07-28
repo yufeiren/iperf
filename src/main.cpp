@@ -194,7 +194,9 @@ int main( int argc, char **argv ) {
         // initialize client(s)
         if ( ext_gSettings->mThreadMode == kMode_Client
 	    || ext_gSettings->mThreadMode == kMode_RDMA_Client) {
-            client_init( ext_gSettings );
+            DPRINTF(("before client_init\n"));
+	    client_init( ext_gSettings );
+	    DPRINTF(("client_init success\n"));
         }
         
         // rdma_cb* cb = new rdma_cb;

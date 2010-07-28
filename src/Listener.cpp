@@ -478,13 +478,16 @@ void Listener::ListenRDMA( ) {
 	struct rdma_cb *cb;
 	DPRINTF(("in ListenRDMA\n"));
 	
+	SockAddr_localAddr( mSettings );
+	
 	if (mCb->sin.ss_family == AF_INET)
-		((struct sockaddr_in *) &mCb->sin)->sin_port = mCb->port;
+		((struct sockaddr_in *) &mCb->sin)->sin_port = htons(mCb->port);
 	else
-		((struct sockaddr_in6 *) &mCb->sin)->sin6_port = mCb->port;
+		((struct sockaddr_in6 *) &mCb->sin)->sin6_port = htons(mCb->port);
 	
 	DPRINTF(("before rdma_bind_addr\n"));
-	rc = rdma_bind_addr(mCb->cm_id, (struct sockaddr *) &mCb->sin);
+//	rc = rdma_bind_addr(mCb->cm_id, (struct sockaddr *) &mCb->sin);
+	rc = rdma_bind_addr(mCb->cm_id, (struct sockaddr *) &mSettings->local);
 	if (rc) {
 		perror("rdma_bind_addr");
 		return;
