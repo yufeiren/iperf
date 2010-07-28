@@ -201,10 +201,14 @@ void rdma_server_spawn( thread_Settings *thread) {
     Server *theServer = NULL;
 
     // Start up the server
+    DPRINTF(("before new Server\n"));
     theServer = new Server( thread );
+    DPRINTF(("new Server success\n"));
     
     // Run the test
+    DPRINTF(("before Server RunRDMA\n"));
     theServer->RunRDMA();
+    DPRINTF(("Server RunRDMA success\n"));
     DELETE_PTR( theServer);
 }
 
