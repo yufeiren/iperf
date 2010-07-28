@@ -103,7 +103,7 @@ Listener::Listener( thread_Settings *inSettings ) {
 	// addr
 	if ( mSettings->mThreadMode == kMode_RDMA_Listener)
 		memcpy( &mCb->sin, &mSettings->local, sizeof(iperf_sockaddr));
-	else if ( mSettings->mThreadMode == kMode_RDMA_client)
+	else if ( mSettings->mThreadMode == kMode_RDMA_Client)
 		memcpy( &mCb->sin, &mSettings->peer, sizeof(iperf_sockaddr));
 	
 	// port

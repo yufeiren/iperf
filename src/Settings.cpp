@@ -283,7 +283,7 @@ void Setting_Copy_Ts2Cb( thread_Setting* from, rdma_cb* into)
 	// addr
 	if ( from->mThreadMode == kMode_RDMA_Listener)
 		memcpy( &into->sin, &from->local, sizeof(iperf_sockaddr));
-	else if ( from->mThreadMode == kMode_RDMA_client)
+	else if ( from->mThreadMode == kMode_RDMA_Client)
 		memcpy( &into->sin, &from->peer, sizeof(iperf_sockaddr));
 	
 	// port
