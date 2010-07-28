@@ -192,6 +192,8 @@ typedef uint64_t max_size_t;
 
 #include "rdma.h"
 
+#include "errors.h"
+
 #ifndef SHUT_RD
     #define SHUT_RD   0
     #define SHUT_WR   1
