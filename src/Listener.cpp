@@ -107,7 +107,7 @@ Listener::Listener( thread_Settings *inSettings ) {
 		memcpy( &mCb->sin, &mSettings->peer, sizeof(iperf_sockaddr));
 */
 	// port
-	mCb->port = htons(mSettings->mPort);
+	mCb->port = mSettings->mPort;
 	DPRINTF(("listening port is %d\n", mCb->port));
 	}
 	
