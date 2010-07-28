@@ -458,6 +458,7 @@ void Listener::Listen( ) {
 void Listener::ListenRDMA( ) {
     int rc;
 	struct rdma_cb *cb;
+	DPRINTF(("in ListenRDMA\n"));
 	
 	if (mCb->sin.ss_family == AF_INET)
 		((struct sockaddr_in *) &mCb->sin)->sin_port = mCb->port;
