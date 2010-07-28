@@ -278,7 +278,7 @@ void Rdma_Settings_Copy( rdma_cb* from, rdma_cb** into )
 	(*into)->child_cm_id->context = *into;
 }
 
-void Setting_Copy_TS_CB( thread_Setting* from, rdma_cb* into)
+void Setting_Copy_Ts2Cb( thread_Setting* from, rdma_cb* into)
 {
 	// addr
 	if ( from->mThreadMode == kMode_RDMA_Listener)
