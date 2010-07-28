@@ -181,14 +181,14 @@ void rdma_listener_spawn( thread_Settings *thread ) {
     Listener *theListener = NULL;
 
     // start up a listener
-    DPRITF(("before new Listener\n"));
+    DPRINTF(("before new Listener\n"));
     theListener = new Listener( thread );
-    DPRITF(("after new Listener\n"));
+    DPRINTF(("after new Listener\n"));
 
     // Start listening
-    DPRITF(("before RunRDMA\n"));
+    DPRINTF(("before RunRDMA\n"));
     theListener->RunRDMA();
-    DPRITF(("after RunRDMA\n"));
+    DPRINTF(("after RunRDMA\n"));
     DELETE_PTR( theListener );
 }
 
