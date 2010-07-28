@@ -84,7 +84,11 @@ Client::Client( thread_Settings *inSettings ) {
         }
     }
 
-	mCb = new rdma_cb;
+    // connect TCP/UDP
+    if ( mSettings->mThreadMode == kMode_Client )
+    	Connect( );
+    else if ( mSettings->mThreadMode == kMode_RDMA_Client ) {// connect RDMA
+    	mCb = new rdma_cb;
 	Settings_Initialize_Cb( mCb );
 	rdma_init( mCb );
 
@@ -101,12 +105,8 @@ Client::Client( thread_Settings *inSettings ) {
 	
 	mCb->server = 0;
 	}
-
-    // connect TCP/UDP
-    if ( mSettings->mThreadMode == kMode_Client )
-    	Connect( );
-    else if ( mSettings->mThreadMode == kMode_RDMA_Client ) // connect RDMA
-    	ConnectRDMA( );
+	ConnectRDMA( );
+    }
     else
     	fprintf(stderr, "err thread mode: %d\n", mSettings->mThreadMode);
 

@@ -74,6 +74,8 @@ Server::Server( thread_Settings *inSettings ) {
     mBuf = new char[ mSettings->mBufLen ];
     FAIL_errno( mBuf == NULL, "No memory for buffer\n", mSettings );
     
+    if ( inSettings->mThreadMode == kMode_RDMA_Server ){
+
 	mCb = new rdma_cb;
 	Settings_Initialize_Cb( mCb );
 	rdma_init( mCb );
@@ -87,11 +89,13 @@ Server::Server( thread_Settings *inSettings ) {
 */
 	// port
 	mCb->port = mSettings->mPort;
-	DPRINTF(("listening port is %d\n", mCb->port));
 	
 	mCb->server = 1;
 	}
 	
+	mCb->child_cm_id = inSettings->child_cm_id;
+    
+    }
 	
 }
 

@@ -92,7 +92,9 @@ Listener::Listener( thread_Settings *inSettings ) {
 
     // initialize buffer
     mBuf = new char[ mSettings->mBufLen ];
-
+	
+    // open listening socket 
+    if ( mSettings->mThreadMode == kMode_RDMA_Listener ) {
 	mCb = new rdma_cb;
 	Settings_Initialize_Cb( mCb );
 	rdma_init( mCb );
@@ -112,10 +114,8 @@ Listener::Listener( thread_Settings *inSettings ) {
 	
 	mCb->server = 1;
 	}
-	
-    // open listening socket 
-    if ( mSettings->mThreadMode == kMode_RDMA_Listener )
     	ListenRDMA( );
+    }
     else
         Listen( ); 
     ReportSettings( inSettings );
@@ -318,6 +318,7 @@ void Listener::RunRDMA( void ) {
         }
         Settings_Copy( mSettings, &server );
         server->mThreadMode = kMode_RDMA_Server;
+        server->child_cm_id = mSettings->child_cm_id;
     
         // Accept each packet, 
         // If there is no existing client, then start  

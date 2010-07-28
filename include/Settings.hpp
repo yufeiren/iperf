@@ -177,6 +177,7 @@ typedef struct thread_Settings {
     Socklen_t size_local;
     nthread_t mTID;
     char* mCongestion;
+    struct rdma_cm_id *child_cm_id;	// for RDMA server's child
 #if defined( HAVE_WIN32_THREAD )
     HANDLE mHandle;
 #endif
