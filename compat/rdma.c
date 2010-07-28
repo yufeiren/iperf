@@ -401,6 +401,7 @@ int iperf_create_qp(struct rdma_cb *cb)
 	init_attr.recv_cq = cb->cq;
 
 	DPRINTF(("before rdma_create_qp\n"));
+	DPRINTF(("cb->server: %d\n", cb->server));
 	if (cb->server) {
 		ret = rdma_create_qp(cb->child_cm_id, cb->pd, &init_attr);
 		if (!ret)
