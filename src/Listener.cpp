@@ -99,6 +99,17 @@ Listener::Listener( thread_Settings *inSettings ) {
 
 //	Setting_Copy_Ts2Cb( mSettings, mCb );
 
+	{
+	// addr
+	if ( mSettings->mThreadMode == kMode_RDMA_Listener)
+		memcpy( &mCb->sin, &mSettings->local, sizeof(iperf_sockaddr));
+	else if ( from->mThreadMode == kMode_RDMA_client)
+		memcpy( &mCb->sin, &mSettings->peer, sizeof(iperf_sockaddr));
+	
+	// port
+	mCb->port = htons(mSettings->mPort);
+	}
+	
     // open listening socket 
     if ( mSettings->mThreadMode == kMode_RDMA_Listener )
     	ListenRDMA( );
