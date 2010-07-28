@@ -97,6 +97,8 @@ Listener::Listener( thread_Settings *inSettings ) {
 	Settings_Initialize_Cb( mCb );
 	rdma_init( mCb );
 
+	Setting_Copy_TS_CB( mSettings, mCb );
+
     // open listening socket 
     if ( mSettings->mThreadMode == kMode_RDMA_Listener )
     	ListenRDMA( );
@@ -638,7 +640,7 @@ void Listener::AcceptRDMA( thread_Settings *server ) {
 	int ret;
 //	rdma_cb *cb;
 	
-	DEBUG_LOG("accepting client connection request\n");
+	DEBUG_LOG("rdma accepting client connection request\n");
 	
 	sem_wait(&mCb->sem); // wait here
 	if (mCb->state != CONNECT_REQUEST) {

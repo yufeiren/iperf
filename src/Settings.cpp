@@ -169,7 +169,7 @@ const struct option env_options[] =
 
 #define SHORT_OPTIONS()
 
-const char short_options[] = "1b:c:df:hi:l:mn:o:p:rst:uvw:x:y:B:CDF:IL:M:NP:RS:T:UVWZ:";
+const char short_options[] = "1b:c:df:hi:l:mn:o:p:rst:uvw:x:y:B:CDF:HIL:M:NP:RS:T:UVWZ:";
 
 /* -------------------------------------------------------------------
  * defaults
@@ -276,6 +276,19 @@ void Rdma_Settings_Copy( rdma_cb* from, rdma_cb** into )
 	memcpy( *into, from, sizeof(rdma_cb) );
 	
 	(*into)->child_cm_id->context = *into;
+}
+
+void Setting_Copy_TS_CB( thread_Setting* from, rdma_cb* into)
+{
+	// addr
+	if ( from->mThreadMode == kMode_RDMA_Listener)
+		memcpy( &into->sin, &from->local, sizeof(iperf_sockaddr));
+	else if ( from->mThreadMode == kMode_RDMA_client)
+		memcpy( &into->sin, &from->peer, sizeof(iperf_sockaddr));
+	
+	// port
+	into->port = htons(from->mPort);
+	
 }
 
 /* -------------------------------------------------------------------
@@ -594,6 +607,15 @@ void Settings_Interpret( char option, const char *optarg, thread_Settings *mExtS
             strcpy( mExtSettings->mFileName, optarg);
             break;
 
+        case 'H': // Run as RDMA style
+	    if ( mExtSettings->mThreadMode == kMode_Listener )
+		mExtSettings->mThreadMode = kMode_RDMA_Listener;
+	    else if ( mExtSettings->mThreadMode == kMode_Client )
+		mExtSettings->mThreadMode = kMode_RDMA_Client;
+	    else
+		fprintf( stderr, warn_invalid_report_style );
+            break;
+
         case 'I' : // Set the stdin as the input source
             if ( mExtSettings->mThreadMode != kMode_Client ) {
                 fprintf( stderr, warn_invalid_server_option, option );
@@ -638,15 +660,8 @@ void Settings_Interpret( char option, const char *optarg, thread_Settings *mExtS
             break;
 
         case 'R':
-//            setRemoveService( mExtSettings );
-	// RDMA style
-		if ( mExtSettings->mThreadMode == kMode_Listener )
-			mExtSettings->mThreadMode = kMode_RDMA_Listener;
-		else if ( mExtSettings->mThreadMode == kMode_Client )
-			mExtSettings->mThreadMode = kMode_RDMA_Client;
-		else
-			fprintf( stderr, warn_invalid_report_style );
-		break;
+            setRemoveService( mExtSettings );
+	    break;
 
         case 'S': // IP type-of-service
             // TODO use a function that understands base-2

@@ -404,6 +404,9 @@ typedef struct server_hdr {
     // copy rdma structure
     void Rdma_Settings_Copy( rdma_cb* from, rdma_cb** into );
     
+    // copy thread_Settings to rdma_cb
+    void Setting_Copy_TS_CB( thread_Setting* from, rdma_cb* cb);
+    
     // free associated memory
     void Settings_Destroy( thread_Settings *mSettings );
 
