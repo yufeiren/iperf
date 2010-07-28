@@ -366,6 +366,7 @@ int iperf_setup_qp(struct rdma_cb *cb, struct rdma_cm_id *cm_id)
 		goto err3;
 	}
 
+	DPRINTF(("before iperf_create_qp\n"));
 	ret = iperf_create_qp(cb);
 	if (ret) {
 		perror("rdma_create_qp");
@@ -398,6 +399,7 @@ int iperf_create_qp(struct rdma_cb *cb)
 	init_attr.send_cq = cb->cq;
 	init_attr.recv_cq = cb->cq;
 
+	DPRINTF(("before rdma_create_qp\n"));
 	if (cb->server) {
 		ret = rdma_create_qp(cb->child_cm_id, cb->pd, &init_attr);
 		if (!ret)
@@ -407,6 +409,7 @@ int iperf_create_qp(struct rdma_cb *cb)
 		if (!ret)
 			cb->qp = cb->cm_id->qp;
 	}
+	DPRINTF(("after rdma_create_qp, ret = %d\n", ret));
 
 	return ret;
 }
