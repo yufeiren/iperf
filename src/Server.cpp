@@ -211,32 +211,39 @@ void Server::RunRDMA( void ) {
     reportstruct = new ReportStruct;
     
     Rdma_Settings_Copy(mCb, &cb);
-
+	DPRINTF(("before iperf_setup_qp\n"));
 	ret = iperf_setup_qp(cb, cb->child_cm_id);
 	if (ret) {
 		fprintf(stderr, "setup_qp failed: %d\n", ret);
 		goto err0;
 	}
+	DPRINTF(("iperf_setup_qp success\n"));
 
+	DPRINTF(("before iperf_setup_buffers\n"));
 	ret = iperf_setup_buffers(cb);
 	if (ret) {
 		fprintf(stderr, "rping_setup_buffers failed: %d\n", ret);
 		goto err1;
 	}
+	DPRINTF(("iperf_setup_buffers success\n"));
 
+	DPRINTF(("before ibv_post_recv\n"));
 	ret = ibv_post_recv(cb->qp, &cb->rq_wr, &bad_recv_wr);
 	if (ret) {
 		fprintf(stderr, "ibv_post_recv failed: %d\n", ret);
 		goto err2;
 	}
+	DPRINTF(("ibv_post_recv success\n"));
 
 	pthread_create(&cb->cqthread, NULL, cq_thread, cb);
 
+	DPRINTF(("before iperf_accept\n"));
 	ret = iperf_accept(cb);
 	if (ret) {
 		fprintf(stderr, "connect error %d\n", ret);
 		goto err3;
 	}
+	DPRINTF(("iperf_accept success\n"));
 	
     if ( reportstruct != NULL ) {
         reportstruct->packetID = 0;
