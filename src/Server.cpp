@@ -75,7 +75,7 @@ Server::Server( thread_Settings *inSettings ) {
     FAIL_errno( mBuf == NULL, "No memory for buffer\n", mSettings );
     
     if ( inSettings->mThreadMode == kMode_RDMA_Server ){
-
+	DPRINTF(("Server: kMode_RDMA_Server\n"));
 	mCb = new rdma_cb;
 	Settings_Initialize_Cb( mCb );
 	rdma_init( mCb );
@@ -94,7 +94,7 @@ Server::Server( thread_Settings *inSettings ) {
 	}
 	
 	mCb->child_cm_id = inSettings->child_cm_id;
-    
+    	DPRINTF(("mCb->child_cm_id  %p\n", mCb->child_cm_id));
     }
 	
 }
@@ -211,9 +211,9 @@ void Server::RunRDMA( void ) {
 
     reportstruct = new ReportStruct;
     DPRINTF(("before Rdma_Settings_Copy\n"));
-    Rdma_Settings_Copy(mCb, &cb);
+//    Rdma_Settings_Copy(mCb, &cb);
 	DPRINTF(("before iperf_setup_qp\n"));
-	ret = iperf_setup_qp(cb, cb->child_cm_id);
+	ret = iperf_setup_qp(mCb, mCb->child_cm_id);
 	if (ret) {
 		fprintf(stderr, "setup_qp failed: %d\n", ret);
 		goto err0;
@@ -221,7 +221,7 @@ void Server::RunRDMA( void ) {
 	DPRINTF(("iperf_setup_qp success\n"));
 
 	DPRINTF(("before iperf_setup_buffers\n"));
-	ret = iperf_setup_buffers(cb);
+	ret = iperf_setup_buffers(mCb);
 	if (ret) {
 		fprintf(stderr, "rping_setup_buffers failed: %d\n", ret);
 		goto err1;
@@ -229,17 +229,17 @@ void Server::RunRDMA( void ) {
 	DPRINTF(("iperf_setup_buffers success\n"));
 
 	DPRINTF(("before ibv_post_recv\n"));
-	ret = ibv_post_recv(cb->qp, &cb->rq_wr, &bad_recv_wr);
+	ret = ibv_post_recv(mCb->qp, &mCb->rq_wr, &bad_recv_wr);
 	if (ret) {
 		fprintf(stderr, "ibv_post_recv failed: %d\n", ret);
 		goto err2;
 	}
 	DPRINTF(("ibv_post_recv success\n"));
 
-	pthread_create(&cb->cqthread, NULL, cq_thread, cb);
+	pthread_create(&mCb->cqthread, NULL, cq_thread, mCb);
 
 	DPRINTF(("before iperf_accept\n"));
-	ret = iperf_accept(cb);
+	ret = iperf_accept(mCb);
 	if (ret) {
 		fprintf(stderr, "connect error %d\n", ret);
 		goto err3;
