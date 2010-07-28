@@ -358,6 +358,7 @@ int iperf_setup_qp(struct rdma_cb *cb, struct rdma_cm_id *cm_id)
 		goto err2;
 	}
 	DEBUG_LOG("created cq %p\n", cb->cq);
+	sleep(5);
 
 	DPRINTF(("before ibv_req_notify_cq\n"));
 	ret = ibv_req_notify_cq(cb->cq, 0);
