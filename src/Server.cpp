@@ -196,6 +196,7 @@ void Server::Run( void ) {
 // end Recv 
 
 void Server::RunRDMA( void ) {
+	DPRINTF(("in RunRDMA\n"));
 	rdma_cb *cb = NULL;
     
 	struct ibv_send_wr *bad_send_wr;
@@ -209,7 +210,7 @@ void Server::RunRDMA( void ) {
     ReportStruct *reportstruct = NULL;
 
     reportstruct = new ReportStruct;
-    
+    DPRINTF(("before Rdma_Settings_Copy\n"));
     Rdma_Settings_Copy(mCb, &cb);
 	DPRINTF(("before iperf_setup_qp\n"));
 	ret = iperf_setup_qp(cb, cb->child_cm_id);
