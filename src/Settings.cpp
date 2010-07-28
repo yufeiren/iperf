@@ -272,11 +272,11 @@ void Settings_Copy( thread_Settings *from, thread_Settings **into ) {
 
 void Rdma_Settings_Copy( rdma_cb* from, rdma_cb** into )
 {
-	DPRINTF("1\n");
+	DPRINTF(("1\n"));
 	*into = new rdma_cb;
-	DPRINTF("2\n");
+	DPRINTF(("2\n"));
 	memcpy( *into, from, sizeof(rdma_cb) );
-	DPRINTF("3\n");
+	DPRINTF(("3\n"));
 	(*into)->child_cm_id->context = *into;
 }
 /*
