@@ -73,6 +73,26 @@ Server::Server( thread_Settings *inSettings ) {
     // initialize buffer
     mBuf = new char[ mSettings->mBufLen ];
     FAIL_errno( mBuf == NULL, "No memory for buffer\n", mSettings );
+    
+	mCb = new rdma_cb;
+	Settings_Initialize_Cb( mCb );
+	rdma_init( mCb );
+	
+	{
+	// addr
+/*	if ( mSettings->mThreadMode == kMode_RDMA_Listener)
+		memcpy( &mCb->sin, &mSettings->local, sizeof(iperf_sockaddr));
+	else if ( mSettings->mThreadMode == kMode_RDMA_Client)
+		memcpy( &mCb->sin, &mSettings->peer, sizeof(iperf_sockaddr));
+*/
+	// port
+	mCb->port = mSettings->mPort;
+	DPRINTF(("listening port is %d\n", mCb->port));
+	
+	mCb->server = 1;
+	}
+	
+	
 }
 
 /* -------------------------------------------------------------------

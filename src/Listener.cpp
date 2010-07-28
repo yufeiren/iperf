@@ -382,7 +382,7 @@ void Listener::RunRDMA( void ) {
                 }
             }
 */
-	
+		DPRINTF(("start a new server\n"));
             thread_start( server );
     
             // Prep for next connection
