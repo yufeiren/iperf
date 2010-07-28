@@ -97,7 +97,7 @@ Listener::Listener( thread_Settings *inSettings ) {
 	Settings_Initialize_Cb( mCb );
 	rdma_init( mCb );
 
-	Setting_Copy_Ts2Cb( mSettings, mCb );
+//	Setting_Copy_Ts2Cb( mSettings, mCb );
 
     // open listening socket 
     if ( mSettings->mThreadMode == kMode_RDMA_Listener )

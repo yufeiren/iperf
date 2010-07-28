@@ -277,7 +277,7 @@ void Rdma_Settings_Copy( rdma_cb* from, rdma_cb** into )
 	
 	(*into)->child_cm_id->context = *into;
 }
-
+/*
 void Setting_Copy_Ts2Cb( thread_Setting* from, rdma_cb* into)
 {
 	// addr
@@ -289,7 +289,7 @@ void Setting_Copy_Ts2Cb( thread_Setting* from, rdma_cb* into)
 	// port
 	into->port = htons(from->mPort);
 	
-}
+}*/
 
 /* -------------------------------------------------------------------
  * Delete memory: Does not clean up open file pointers or ptr_parents
