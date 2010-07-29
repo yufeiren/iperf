@@ -294,6 +294,8 @@ void *cq_thread(void *arg)
 
 int rdma_init( struct rdma_cb *cb ) {
 	int ret = 0;
+	
+	sem_init(&cb->sem, 0, 0);
 
 /*	cb = malloc(sizeof(*cb));
 	if (!cb)
