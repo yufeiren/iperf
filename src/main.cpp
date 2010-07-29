@@ -211,7 +211,7 @@ int main( int argc, char **argv ) {
 	    // Initialize settings to defaults
 	    Settings_Initialize_Cb( cb );
 	
-	    rdma_init( cb );
+//	    rdma_init( cb );
 	}
 
 #ifdef HAVE_THREAD
