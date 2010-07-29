@@ -200,6 +200,8 @@ int rdma_connect_client(struct rdma_cb *cb);
 
 int iperf_accept(struct rdma_cb *cb);
 
+void iperf_format_send(struct iperf_cb *cb, char *buf, struct ibv_mr *mr);
+
 #ifdef __cplusplus
 } /* end extern "C" */
 #endif

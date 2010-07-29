@@ -273,6 +273,8 @@ void Client::RunRDMA( void ) {
 //        currLen = write( mSettings->mSock, mBuf, mSettings->mBufLen );
 	DPRINTF(("client start transfer data via rdma\n"));
 	mCb->state = RDMA_READ_ADV;
+	
+	iperf_format_send(mCb, mCb->start_buf, mCb->start_mr);
 
 	err = ibv_post_send(mCb->qp, &mCb->sq_wr, &bad_wr);
 	if (err) {

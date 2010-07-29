@@ -595,3 +595,15 @@ int iperf_accept(struct rdma_cb *cb)
 	return 0;
 }
 
+void iperf_format_send(struct iperf_cb *cb, char *buf, struct ibv_mr *mr)
+{
+	struct iperf_rdma_info *info = &cb->send_buf;
+
+	info->buf = htonll((uint64_t) (unsigned long) buf);
+	info->rkey = htonl(mr->rkey);
+	info->size = htonl(cb->size);
+
+	DEBUG_LOG("RDMA addr %" PRIx64" rkey %x len %d\n",
+		  ntohll(info->buf), ntohl(info->rkey), ntohl(info->size));
+}
+
