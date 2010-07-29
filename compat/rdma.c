@@ -192,6 +192,8 @@ int iperf_cq_event_handler(struct rdma_cb *cb)
 	struct ibv_wc wc;
 	struct ibv_recv_wr *bad_wr;
 	int ret;
+	
+	DPRINTF(("iperf_cq_event_handler sem_post @ %x", &cb->sem));
 
 	while ((ret = ibv_poll_cq(cb->cq, 1, &wc)) == 1) {
 		ret = 0;
