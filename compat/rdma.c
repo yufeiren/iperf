@@ -222,6 +222,7 @@ int iperf_cq_event_handler(struct rdma_cb *cb)
 
 		case IBV_WC_RECV:
 			DEBUG_LOG("recv completion\n");
+			DPRINTF(("IBV_WC_RECV cb->server %d\n", cb->server));
 			ret = cb->server ? server_recv(cb, &wc) :
 					   client_recv(cb, &wc);
 			if (ret) {
@@ -235,6 +236,7 @@ int iperf_cq_event_handler(struct rdma_cb *cb)
 				goto error;
 			}
 			sem_post(&cb->sem);
+			DPRINTF(("IBV_WC_RECV success\n"));
 			break;
 
 		default:
