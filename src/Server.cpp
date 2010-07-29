@@ -355,13 +355,13 @@ void Server::RunRDMA( void ) {
     Mutex_Unlock( &clients_mutex );
 
 //	iperf_test_server(cb);
-	rdma_disconnect(cb->child_cm_id);
-	iperf_free_buffers(cb);
-	iperf_free_qp(cb);
-	pthread_cancel(cb->cqthread);
-	pthread_join(cb->cqthread, NULL);
-	rdma_destroy_id(cb->child_cm_id);
-	delete cb;
+	rdma_disconnect(mCb->child_cm_id);
+	iperf_free_buffers(mCb);
+	iperf_free_qp(mCb);
+	pthread_cancel(mCb->cqthread);
+	pthread_join(mCb->cqthread, NULL);
+	rdma_destroy_id(mCb->child_cm_id);
+	delete mCb;
 
 
     DELETE_PTR( reportstruct );
