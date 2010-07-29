@@ -141,7 +141,7 @@
 /** Added for semaphore */
     #include <semaphore.h>
 
-/** Added for debug */
+/** Added for PRIx64 */
     #include <inttypes.h>
 
 SPECIAL_OSF1_EXTERN_C_START
