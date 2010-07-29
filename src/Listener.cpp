@@ -318,7 +318,8 @@ void Listener::RunRDMA( void ) {
         }
         Settings_Copy( mSettings, &server );
         server->mThreadMode = kMode_RDMA_Server;
-        server->child_cm_id = mSettings->child_cm_id;
+        server->child_cm_id = mCb->child_cm_id;
+        DPRINTF(("RunRDMA: mCb->child_cm_id  %p\n", mCb->child_cm_id));
     
         // Accept each packet, 
         // If there is no existing client, then start  
@@ -384,6 +385,8 @@ void Listener::RunRDMA( void ) {
             }
 */
 		DPRINTF(("start a new server\n"));
+		DPRINTF(("RunRDMA: mCb->child_cm_id %p\n", mCb->child_cm_id));
+		server->child_cm_id = mCb->child_cm_id;
             thread_start( server );
     
             // Prep for next connection
