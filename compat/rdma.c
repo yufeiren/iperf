@@ -101,6 +101,8 @@ int iperf_cma_event_handler(struct rdma_cm_id *cma_id,
 	DEBUG_LOG("cma_event type %s cma_id %p (%s)\n",
 		  rdma_event_str(event->event), cma_id,
 		  (cma_id == cb->cm_id) ? "parent" : "child");
+		  
+	DPRINTF(("cq_handler cb @ %x\n", (unsigned long)cb));
 
 	switch (event->event) {
 	case RDMA_CM_EVENT_ADDR_RESOLVED:
@@ -595,6 +597,7 @@ int iperf_accept(struct rdma_cb *cb)
 		fprintf(stderr, "wait for CONNECTED state %d\n", cb->state);
 		return -1;
 	}
+	DPRINTF(("iperf_accept finish with state %d\n", cb->state));
 	return 0;
 }
 

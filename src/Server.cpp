@@ -259,7 +259,7 @@ void Server::RunRDMA( void ) {
 	    DPRINTF(("server start transfer data via rdma\n"));
 	    DPRINTF(("cb @ %x\n", (unsigned long)mCb));
 	    DPRINTF(("sem_wait @ %x\n", (unsigned long)&mCb->sem));
-            sem_wait(&mCb->sem);
+//            sem_wait(&mCb->sem);
 		if (mCb->state != RDMA_READ_ADV) {
 			fprintf(stderr, "wait for RDMA_READ_ADV state %d\n",
 				mCb->state);
