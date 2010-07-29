@@ -281,7 +281,7 @@ void Server::RunRDMA( void ) {
 			break;
 		}
 		DEBUG_LOG("server posted rdma read req\n");
-
+sleep(10);
 		/* Wait for read completion */
 		sem_wait(&mCb->sem);
 		if (mCb->state != RDMA_READ_COMPLETE) {
