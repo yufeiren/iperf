@@ -252,6 +252,8 @@ void Server::RunRDMA( void ) {
     if ( reportstruct != NULL ) {
         reportstruct->packetID = 0;
         mSettings->reporthdr = InitReport( mSettings );
+        
+        int first = 0;
         do {
             // perform read 
 //            currLen = recv( mSettings->mSock, mBuf, mSettings->mBufLen, 0 ); 
@@ -259,7 +261,9 @@ void Server::RunRDMA( void ) {
 	    DPRINTF(("server start transfer data via rdma\n"));
 	    DPRINTF(("cb @ %x\n", (unsigned long)mCb));
 	    DPRINTF(("sem_wait @ %x\n", (unsigned long)&mCb->sem));
-//            sem_wait(&mCb->sem);
+            if (first == 0)
+		sem_wait(&mCb->sem);
+	    first = 1;
 		if (mCb->state != RDMA_READ_ADV) {
 			fprintf(stderr, "wait for RDMA_READ_ADV state %d\n",
 				mCb->state);
@@ -281,7 +285,7 @@ void Server::RunRDMA( void ) {
 			break;
 		}
 		DEBUG_LOG("server posted rdma read req\n");
-sleep(10);
+
 		/* Wait for read completion */
 		sem_wait(&mCb->sem);
 		if (mCb->state != RDMA_READ_COMPLETE) {
@@ -324,8 +328,6 @@ sleep(10);
                 gettimeofday( &(reportstruct->packetTime), NULL );
                 ReportPacket( mSettings->reporthdr, reportstruct );
             }
-
-
 
         } while ( currLen > 0 ); 
         
