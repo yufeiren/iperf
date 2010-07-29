@@ -141,6 +141,9 @@
 /** Added for semaphore */
     #include <semaphore.h>
 
+/** Added for debug */
+    #include <inttypes.h>
+
 SPECIAL_OSF1_EXTERN_C_START
     #include <netdb.h>
 SPECIAL_OSF1_EXTERN_C_STOP

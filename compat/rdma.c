@@ -64,8 +64,8 @@ static int server_recv(struct rdma_cb *cb, struct ibv_wc *wc)
 	cb->remote_rkey = ntohl(cb->recv_buf.rkey);
 	cb->remote_addr = ntohll(cb->recv_buf.buf);
 	cb->remote_len  = ntohl(cb->recv_buf.size);
-//	DEBUG_LOG("Received rkey %x addr %" PRIx64 " len %d from peer\n",
-//		  cb->remote_rkey, cb->remote_addr, cb->remote_len);
+	DEBUG_LOG("Received rkey %x addr %" PRIx64 " len %d from peer\n",
+		  cb->remote_rkey, cb->remote_addr, cb->remote_len);
 
 	if (cb->state <= CONNECTED || cb->state == RDMA_WRITE_COMPLETE)
 		cb->state = RDMA_READ_ADV;
