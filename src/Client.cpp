@@ -90,7 +90,7 @@ Client::Client( thread_Settings *inSettings ) {
     else if ( mSettings->mThreadMode == kMode_RDMA_Client ) {// connect RDMA
     	mCb = new rdma_cb;
 	Settings_Initialize_Cb( mCb );
-	rdma_init( mCb );
+//	rdma_init( mCb );
 
 	{
 	// addr

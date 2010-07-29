@@ -78,7 +78,7 @@ Server::Server( thread_Settings *inSettings ) {
 	DPRINTF(("Server: kMode_RDMA_Server\n"));
 	mCb = new rdma_cb;
 	Settings_Initialize_Cb( mCb );
-	rdma_init( mCb );
+//	rdma_init( mCb );
 	
 	{
 	// addr
