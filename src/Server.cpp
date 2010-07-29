@@ -91,6 +91,9 @@ Server::Server( thread_Settings *inSettings ) {
 	mCb->port = mSettings->mPort;
 	
 	mCb->server = 1;
+	
+	mCb->size = mSettings->mBufLen;
+	DPRINTF(("server buffer size is %d\n", mCb->size));
 	}
 	
 	mCb->child_cm_id = inSettings->child_cm_id;
@@ -254,10 +257,10 @@ void Server::RunRDMA( void ) {
 //            currLen = recv( mSettings->mSock, mBuf, mSettings->mBufLen, 0 ); 
             
 	    DPRINTF(("server start transfer data via rdma\n"));
-            sem_wait(&cb->sem);
-		if (cb->state != RDMA_READ_ADV) {
+            sem_wait(&mCb->sem);
+		if (mCb->state != RDMA_READ_ADV) {
 			fprintf(stderr, "wait for RDMA_READ_ADV state %d\n",
-				cb->state);
+				mCb->state);
 			ret = -1;
 			break;
 		}
@@ -265,12 +268,12 @@ void Server::RunRDMA( void ) {
 		DEBUG_LOG("server received sink adv\n");
 
 		/* Issue RDMA Read. */
-		cb->rdma_sq_wr.opcode = IBV_WR_RDMA_READ;
-		cb->rdma_sq_wr.wr.rdma.rkey = cb->remote_rkey;
-		cb->rdma_sq_wr.wr.rdma.remote_addr = cb->remote_addr;
-		cb->rdma_sq_wr.sg_list->length = cb->remote_len;
+		mCb->rdma_sq_wr.opcode = IBV_WR_RDMA_READ;
+		mCb->rdma_sq_wr.wr.rdma.rkey = cb->remote_rkey;
+		mCb->rdma_sq_wr.wr.rdma.remote_addr = cb->remote_addr;
+		mCb->rdma_sq_wr.sg_list->length = cb->remote_len;
 
-		ret = ibv_post_send(cb->qp, &cb->rdma_sq_wr, &bad_send_wr);
+		ret = ibv_post_send(mCb->qp, &mCb->rdma_sq_wr, &bad_send_wr);
 		if (ret) {
 			fprintf(stderr, "post send error %d\n", ret);
 			break;
@@ -278,20 +281,20 @@ void Server::RunRDMA( void ) {
 		DEBUG_LOG("server posted rdma read req \n");
 
 		/* Wait for read completion */
-		sem_wait(&cb->sem);
-		if (cb->state != RDMA_READ_COMPLETE) {
+		sem_wait(&mCb->sem);
+		if (mCb->state != RDMA_READ_COMPLETE) {
 			fprintf(stderr, "wait for RDMA_READ_COMPLETE state %d\n",
-				cb->state);
+				mCb->state);
 			ret = -1;
 			break;
 		}
 		DEBUG_LOG("server received read complete\n");
 
 		/* Display data in recv buf */
-		if (cb->verbose)
-			printf("server ping data: %s\n", cb->rdma_buf);
+		if (mCb->verbose)
+			printf("server ping data: %s\n", mCb->rdma_buf);
 
-            currLen = cb->remote_len;
+            currLen = mCb->remote_len;
             DEBUG_LOG("server: RDMA read %ld byte this time\n", currLen);
             
             if ( isUDP( mSettings ) ) {

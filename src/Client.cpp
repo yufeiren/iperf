@@ -104,6 +104,9 @@ Client::Client( thread_Settings *inSettings ) {
 	DPRINTF(("connecting port is %d\n", mCb->port));
 	
 	mCb->server = 0;
+	
+	mCb->size = mSettings->mBufLen;
+	DPRINTF(("client buffer size is %d\n", mCb->size));
 	}
 	ConnectRDMA( );
     }
@@ -274,6 +277,7 @@ void Client::RunRDMA( void ) {
 		fprintf(stderr, "post send error %d\n", err);
 		break;
 	}
+	DPRINTF(("client ibv_post_send success\n"));
 
 	/* Wait for server to ACK read complete */
 	sem_wait(&mCb->sem);
@@ -283,6 +287,8 @@ void Client::RunRDMA( void ) {
 		err = -1;
 		break;
 	}
+	DPRINTF(("client Wait for server to ACK read complete success\n"));
+	
 /*
 	rping_format_send(cb, cb->rdma_buf, cb->rdma_mr);
 	ret = ibv_post_send(cb->qp, &cb->sq_wr, &bad_wr);

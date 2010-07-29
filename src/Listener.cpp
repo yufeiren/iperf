@@ -113,6 +113,9 @@ Listener::Listener( thread_Settings *inSettings ) {
 	DPRINTF(("listening port is %d\n", mCb->port));
 	
 	mCb->server = 1;
+	
+	mCb->size = mSettings->mBufLen;
+	DPRINTF(("Listener buffer size is %d\n", mCb->size));
 	}
     	ListenRDMA( );
     }

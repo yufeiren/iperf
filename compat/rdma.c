@@ -71,7 +71,8 @@ static int server_recv(struct rdma_cb *cb, struct ibv_wc *wc)
 		cb->state = RDMA_READ_ADV;
 	else
 		cb->state = RDMA_WRITE_ADV;
-
+	DPRINTF(("server_recv success\n"));
+	
 	return 0;
 }
 
