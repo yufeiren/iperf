@@ -595,7 +595,7 @@ int iperf_accept(struct rdma_cb *cb)
 	return 0;
 }
 
-void iperf_format_send(struct iperf_cb *cb, char *buf, struct ibv_mr *mr)
+void iperf_format_send(struct rdma_cb *cb, char *buf, struct ibv_mr *mr)
 {
 	struct iperf_rdma_info *info = &cb->send_buf;
 
