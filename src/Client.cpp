@@ -91,7 +91,7 @@ Client::Client( thread_Settings *inSettings ) {
     	mCb = new rdma_cb;
 	Settings_Initialize_Cb( mCb );
 	mCb->size = mSettings->mBufLen;
-	DRPINTF(("client buffer size is %d\n", mCb->size));
+	DPRINTF(("client buffer size is %d\n", mCb->size));
 	rdma_init( mCb );
 
 	{
