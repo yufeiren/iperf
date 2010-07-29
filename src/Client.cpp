@@ -284,7 +284,7 @@ void Client::RunRDMA( void ) {
 	DPRINTF(("client ibv_post_send success\n"));
 
 	/* Wait for server to ACK read complete */
-	DPRINTF(("sem_wait @ %x", &mCb->sem));
+	DPRINTF(("sem_wait @ 0x%", PRIx64, "\n", ntohll(&mCb->sem)));
 	sem_wait(&mCb->sem);
 	if (mCb->state != RDMA_WRITE_ADV) {
 		fprintf(stderr, "wait for RDMA_WRITE_ADV state %d\n",
