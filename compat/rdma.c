@@ -564,7 +564,7 @@ int rdma_connect_client(struct rdma_cb *cb)
 		return -1;
 	}
 
-	DEBUG_LOG("rmda_connect successful\n");
+	DEBUG_LOG("rdma_connect successful\n");
 	return 0;
 }
 
