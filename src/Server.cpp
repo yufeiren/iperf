@@ -369,14 +369,14 @@ void Server::RunRDMA( void ) {
     
     return;
 err3:
-	pthread_cancel(cb->cqthread);
-	pthread_join(cb->cqthread, NULL);
+	pthread_cancel(mCb->cqthread);
+	pthread_join(mCb->cqthread, NULL);
 err2:
-	iperf_free_buffers(cb);
+	iperf_free_buffers(mCb);
 err1:
-	iperf_free_qp(cb);
+	iperf_free_qp(mCb);
 err0:
-	delete cb;
+	delete mCb;
 	return;
 } 
 
