@@ -90,6 +90,8 @@ Client::Client( thread_Settings *inSettings ) {
     else if ( mSettings->mThreadMode == kMode_RDMA_Client ) {// connect RDMA
     	mCb = new rdma_cb;
 	Settings_Initialize_Cb( mCb );
+	mCb->size = mSettings->mBufLen;
+	DRPINTF(("client buffer size is %d\n", mCb->size));
 	rdma_init( mCb );
 
 	{
