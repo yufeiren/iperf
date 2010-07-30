@@ -313,7 +313,7 @@ void Client::RunRDMA( void ) {
 		break;
 	}
 	
-	currLen = 2 * ( Cb->size + sizeof( iperf_rdma_info ) );
+	currLen = 2 * ( mCb->size + sizeof( iperf_rdma_info ) );
 	
 /*        if ( currLen < 0 ) {
             WARN_errno( currLen < 0, "write2" ); 
