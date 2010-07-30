@@ -300,7 +300,7 @@ void Client::RunRDMA( void ) {
 	iperf_format_send(mCb, mCb->rdma_buf, mCb->rdma_mr);
 	err = ibv_post_send(mCb->qp, &mCb->sq_wr, &bad_wr);
 	if (err) {
-		fprintf(stderr, "post send error %d\n", ret);
+		fprintf(stderr, "post send error %d\n", err);
 		break;
 	}
 
