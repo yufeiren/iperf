@@ -285,7 +285,7 @@ void Server::RunRDMA( void ) {
 			break;
 		}
 		DEBUG_LOG("server posted rdma read req\n");
-sleep(3);
+
 		/* Wait for read completion */
 		sem_wait(&mCb->sem);
 		if (mCb->state != RDMA_READ_COMPLETE) {
@@ -299,6 +299,14 @@ sleep(3);
 		/* Display data in recv buf */
 		if (mCb->verbose)
 			printf("server ping data: %s\n", mCb->rdma_buf);
+			
+		/* Tell client to continue */
+		ret = ibv_post_send(mCb->qp, &mCb->sq_wr, &bad_send_wr);
+		if (ret) {
+			fprintf(stderr, "post send error %d\n", ret);
+			break;
+		}
+		DEBUG_LOG("server posted go ahead\n");
 
             currLen = mCb->remote_len;
             DEBUG_LOG("server: RDMA read %ld byte this time\n", currLen);
@@ -316,7 +324,8 @@ sleep(3);
         
             // terminate when datagram begins with negative index 
             // the datagram ID should be correct, just negated 
-            if ( reportstruct->packetID < 0 ) {
+            DPRINTF(("packetID %d\n", reportstruct->packetID));
+	    if ( reportstruct->packetID < 0 ) {
                 reportstruct->packetID = -reportstruct->packetID;
                 currLen = -1; 
             }
@@ -328,6 +337,8 @@ sleep(3);
                 gettimeofday( &(reportstruct->packetTime), NULL );
                 ReportPacket( mSettings->reporthdr, reportstruct );
             }
+            
+            DPRINTF(("server currLen = %d\n", currLen));
 
         } while ( currLen > 0 ); 
         
