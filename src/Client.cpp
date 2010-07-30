@@ -297,9 +297,9 @@ void Client::RunRDMA( void ) {
 	DPRINTF(("client Wait for server to ACK read complete success\n"));
 	
 
-	rping_format_send(mCb, mCb->rdma_buf, mCb->rdma_mr);
-	ret = ibv_post_send(mCb->qp, &mCb->sq_wr, &bad_wr);
-	if (ret) {
+	iperf_format_send(mCb, mCb->rdma_buf, mCb->rdma_mr);
+	err = ibv_post_send(mCb->qp, &mCb->sq_wr, &bad_wr);
+	if (err) {
 		fprintf(stderr, "post send error %d\n", ret);
 		break;
 	}
@@ -309,7 +309,7 @@ void Client::RunRDMA( void ) {
 	if (mCb->state != RDMA_WRITE_COMPLETE) {
 		fprintf(stderr, "wait for RDMA_WRITE_COMPLETE state %d\n",
 			mCb->state);
-		ret = -1;
+		err = -1;
 		break;
 	}
 	
