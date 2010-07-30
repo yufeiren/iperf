@@ -346,7 +346,7 @@ sleep(5);
 		DEBUG_LOG("server rdma write complete \n");
 
 		/* Tell client to begin again */
-		ret = ibv_post_send(mCb->qp, &mCb->sq_wr, &bad_wr);
+		ret = ibv_post_send(mCb->qp, &mCb->sq_wr, &bad_send_wr);
 		if (ret) {
 			fprintf(stderr, "post send error %d\n", ret);
 			break;
