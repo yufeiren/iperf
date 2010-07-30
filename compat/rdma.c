@@ -102,7 +102,7 @@ int iperf_cma_event_handler(struct rdma_cm_id *cma_id,
 		  rdma_event_str(event->event), cma_id,
 		  (cma_id == cb->cm_id) ? "parent" : "child");
 		  
-	DPRINTF(("cq_handler cb @ %x\n", (unsigned long)cb));
+	DPRINTF(("1 cq_handler cb @ %x\n", (unsigned long)cb));
 
 	switch (event->event) {
 	case RDMA_CM_EVENT_ADDR_RESOLVED:
@@ -195,7 +195,7 @@ int iperf_cq_event_handler(struct rdma_cb *cb)
 	struct ibv_recv_wr *bad_wr;
 	int ret;
 	
-	DPRINTF(("cq_handler cb @ %x\n", (unsigned long)cb));
+	DPRINTF(("2 cq_handler cb @ %x\n", (unsigned long)cb));
 	DPRINTF(("cq_handler sem_post @ %x\n", (unsigned long)&cb->sem));
 
 	while ((ret = ibv_poll_cq(cb->cq, 1, &wc)) == 1) {
