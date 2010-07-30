@@ -296,22 +296,22 @@ void Client::RunRDMA( void ) {
 	}
 	DPRINTF(("client Wait for server to ACK read complete success\n"));
 	
-/*
+
 	rping_format_send(cb, cb->rdma_buf, cb->rdma_mr);
 	ret = ibv_post_send(cb->qp, &cb->sq_wr, &bad_wr);
 	if (ret) {
 		fprintf(stderr, "post send error %d\n", ret);
 		break;
 	}
-*/
-	/* Wait for the server to say the RDMA Write is complete.
+
+	/* Wait for the server to say the RDMA Write is complete. */
 	sem_wait(&cb->sem);
 	if (cb->state != RDMA_WRITE_COMPLETE) {
 		fprintf(stderr, "wait for RDMA_WRITE_COMPLETE state %d\n",
 			cb->state);
 		ret = -1;
 		break;
-	} */
+	}
 	
 	currLen = mCb->size + sizeof( iperf_rdma_info );
 	

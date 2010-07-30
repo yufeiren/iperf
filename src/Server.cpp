@@ -308,6 +308,51 @@ void Server::RunRDMA( void ) {
 		}
 		DEBUG_LOG("server posted go ahead\n");
 sleep(5);
+
+/* Wait for client's RDMA STAG/TO/Len */
+		sem_wait(&mCb->sem);
+		if (mCb->state != RDMA_WRITE_ADV) {
+			fprintf(stderr, "wait for RDMA_WRITE_ADV state %d\n",
+				mCb->state);
+			ret = -1;
+			break;
+		}
+		DEBUG_LOG("server received sink adv\n");
+
+		/* RDMA Write echo data */
+		mCb->rdma_sq_wr.opcode = IBV_WR_RDMA_WRITE;
+		mCb->rdma_sq_wr.wr.rdma.rkey = mCb->remote_rkey;
+		mCb->rdma_sq_wr.wr.rdma.remote_addr = mCb->remote_addr;
+		mCb->rdma_sq_wr.sg_list->length = strlen(mCb->rdma_buf) + 1;
+		DEBUG_LOG("rdma write from lkey %x laddr %" PRIx64 " len %d\n",
+			  mCb->rdma_sq_wr.sg_list->lkey,
+			  mCb->rdma_sq_wr.sg_list->addr,
+			  mCb->rdma_sq_wr.sg_list->length);
+
+		ret = ibv_post_send(mCb->qp, &mCb->rdma_sq_wr, &bad_wr);
+		if (ret) {
+			fprintf(stderr, "post send error %d\n", ret);
+			break;
+		}
+
+		/* Wait for completion */
+		ret = sem_wait(&mCb->sem);
+		if (mCb->state != RDMA_WRITE_COMPLETE) {
+			fprintf(stderr, "wait for RDMA_WRITE_COMPLETE state %d\n",
+				mCb->state);
+			ret = -1;
+			break;
+		}
+		DEBUG_LOG("server rdma write complete \n");
+
+		/* Tell client to begin again */
+		ret = ibv_post_send(mCb->qp, &mCb->sq_wr, &bad_wr);
+		if (ret) {
+			fprintf(stderr, "post send error %d\n", ret);
+			break;
+		}
+		DEBUG_LOG("server posted go ahead\n");
+		
             currLen = mCb->remote_len;
             DEBUG_LOG("server: RDMA read %ld byte this time\n", currLen);
             
