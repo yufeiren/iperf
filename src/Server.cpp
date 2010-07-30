@@ -307,7 +307,7 @@ void Server::RunRDMA( void ) {
 			break;
 		}
 		DEBUG_LOG("server posted go ahead\n");
-sleep(5);
+// sleep(5);
 
 /* Wait for client's RDMA STAG/TO/Len */
 		sem_wait(&mCb->sem);
