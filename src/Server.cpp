@@ -324,12 +324,12 @@ sleep(5);
 		mCb->rdma_sq_wr.wr.rdma.rkey = mCb->remote_rkey;
 		mCb->rdma_sq_wr.wr.rdma.remote_addr = mCb->remote_addr;
 		mCb->rdma_sq_wr.sg_list->length = strlen(mCb->rdma_buf) + 1;
-		DEBUG_LOG("rdma write from lkey %x laddr %" PRIx64 " len %d\n",
+		DEBUG_LOG("rdma write from lkey %x laddr %x len %d\n",
 			  mCb->rdma_sq_wr.sg_list->lkey,
 			  mCb->rdma_sq_wr.sg_list->addr,
 			  mCb->rdma_sq_wr.sg_list->length);
 
-		ret = ibv_post_send(mCb->qp, &mCb->rdma_sq_wr, &bad_wr);
+		ret = ibv_post_send(mCb->qp, &mCb->rdma_sq_wr, &bad_send_wr);
 		if (ret) {
 			fprintf(stderr, "post send error %d\n", ret);
 			break;
