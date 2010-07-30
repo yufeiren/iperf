@@ -353,7 +353,7 @@ void Server::RunRDMA( void ) {
 		}
 		DEBUG_LOG("server posted go ahead\n");
 		
-            currLen = mCb->remote_len;
+            currLen = 2 * ( mCb->remote_len + sizeof( iperf_rdma_info ) );
             DEBUG_LOG("server: RDMA read %ld byte this time\n", currLen);
             
             if ( isUDP( mSettings ) ) {
