@@ -286,6 +286,7 @@ void Client::RunRDMA( void ) {
 	/* Wait for server to ACK read complete */
 	DPRINTF(("client RunRDMA cb @ %x\n", (unsigned long)mCb));
 	DPRINTF(("client RunRDMA sem_wait @ %x\n", (unsigned long)&mCb->sem));
+	DPRINTF(("wait server to say go ahead\n"));
 	sem_wait(&mCb->sem);
 	if (mCb->state != RDMA_WRITE_ADV) {
 		fprintf(stderr, "wait for RDMA_WRITE_ADV state %d\n",
