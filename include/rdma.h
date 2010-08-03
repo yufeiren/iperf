@@ -113,8 +113,10 @@ struct iperf_rdma_info {
 #define _stringify( _x ) # _x
 #define stringify( _x ) _stringify( _x )
 
+/*
 #define RPING_MSG_FMT           "rdma-ping-%d: "
 #define RPING_MIN_BUFSIZE       sizeof(stringify(INT_MAX)) + sizeof(RPING_MSG_FMT)
+*/
 
 /*
  * RDMA Control block struct.

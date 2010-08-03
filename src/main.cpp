@@ -98,6 +98,12 @@ extern "C" {
     // serialize modification of the report list
     Condition ReportCond;
     Condition ReportDoneCond;
+    
+    // because there is no socket fd in rdmacm, but the reporter's transferID
+    // is mSock in mSetting, so create a new global PseudoSock fd
+    // for reporting.
+    int PseudoSock = 0;
+
 }
 
 // global variables only accessed within this file

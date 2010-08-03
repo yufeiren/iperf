@@ -680,6 +680,9 @@ void Client::ConnectRDMA( ) {
 	(sockaddr*) &mSettings->local = rdma_get_local_addr(cb->cm_id);
 	(sockaddr*) &mSettings->peer = rdma_get_peer_addr(cb->cm_id);
 */
+
+	mSettings->mSock = ++ PseudoSock;
+	
 	return;
 //	rping_test_client(cb);
 //	rdma_disconnect(cb->cm_id);
