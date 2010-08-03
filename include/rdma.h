@@ -117,6 +117,7 @@ struct iperf_rdma_info {
 #define RPING_MSG_FMT           "rdma-ping-%d: "
 #define RPING_MIN_BUFSIZE       sizeof(stringify(INT_MAX)) + sizeof(RPING_MSG_FMT)
 */
+extern int PseudoSock;
 
 /*
  * RDMA Control block struct.
