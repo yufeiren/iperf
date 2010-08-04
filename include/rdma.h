@@ -65,6 +65,9 @@ extern "C" {
 // #define DEBUG_LOG if (rdma_debug) printf
 #define DEBUG_LOG printf
 
+// rdma_listen backlog
+#define RLISTENBACKLOG		32
+
 /*
  * riperf data transfer type:
  *	1 client/server set buffer, client use RDMA WRITE

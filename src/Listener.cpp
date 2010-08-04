@@ -507,7 +507,7 @@ void Listener::ListenRDMA( ) {
 
 	DEBUG_LOG("rdma_listen\n");
 	DPRINTF(("before rdma_listen\n"));
-	rc = rdma_listen(mCb->cm_id, 3);
+	rc = rdma_listen(mCb->cm_id, RLISTENBACKLOG);
 	if (rc) {
 		perror("rdma_listen");
 		return;
