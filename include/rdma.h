@@ -61,7 +61,7 @@ extern "C" {
 #include <rdma/rdma_cma.h>
 #include <infiniband/arch.h>
 
-extern int rdma_debug = 0;
+extern int rdma_debug;
 #define DEBUG_LOG if (rdma_debug) printf
 // #define DEBUG_LOG printf
 
