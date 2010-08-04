@@ -103,6 +103,8 @@ extern "C" {
     // is mSock in mSetting, so create a new global PseudoSock fd
     // for reporting.
     int PseudoSock = 0;
+    
+    int rdma_debug = 0;
 
 }
 
