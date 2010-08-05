@@ -68,6 +68,15 @@ extern int rdma_debug;
 // rdma_listen backlog
 #define RLISTENBACKLOG		32
 
+// rdma transfer mode
+typedef enum RdmaTransMode {
+    kRdmaTrans_ActRead = 0,
+    kRdmaTrans_ActWrte,
+    kRdmaTrans_PasRead,
+    kRdmaTrans_PasWrte,
+    kRdmaTrans_Unknown,
+} RdmaTransMode;
+
 /*
  * riperf data transfer type:
  *	1 client/server set buffer, client use RDMA WRITE
