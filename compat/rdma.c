@@ -64,9 +64,29 @@ static int server_recv(struct rdma_cb *cb, struct ibv_wc *wc)
 	cb->remote_rkey = ntohl(cb->recv_buf.rkey);
 	cb->remote_addr = ntohll(cb->recv_buf.buf);
 	cb->remote_len  = ntohl(cb->recv_buf.size);
+	cb->remote_mode = ntohl(cb->recv_buf.mode);
 	DEBUG_LOG("Received rkey %x addr %" PRIx64 " len %d from peer\n",
 		  cb->remote_rkey, cb->remote_addr, cb->remote_len);
-
+	
+	switch ( cb->remote_mode ) {
+	case MODE_RDMA_ACTRD:
+		cb->trans_mode = kRdmaTrans_PasRead;
+		break;
+	case MODE_RDMA_ACTWR:
+		cb->trans_mode = kRdmaTrans_PasWrte;
+		break;
+	case MODE_RDMA_PASRD:
+		cb->trans_mode = kRdmaTrans_ActRead;
+		break;
+	case MODE_RDMA_PASWR:
+		cb->trans_mode = kRdmaTrans_ActWrte;
+		break;
+	default:
+		fprintf(stderr, "unrecognize transfer mode %d\n", \
+			cb->remote_mode);
+		break;
+	}
+	
 	if (cb->state <= CONNECTED || cb->state == RDMA_WRITE_COMPLETE)
 		cb->state = RDMA_READ_ADV;
 	else
@@ -601,6 +621,7 @@ int iperf_accept(struct rdma_cb *cb)
 	return 0;
 }
 
+
 void iperf_format_send(struct rdma_cb *cb, char *buf, struct ibv_mr *mr)
 {
 	struct iperf_rdma_info *info = &cb->send_buf;
@@ -608,8 +629,174 @@ void iperf_format_send(struct rdma_cb *cb, char *buf, struct ibv_mr *mr)
 	info->buf = htonll((uint64_t) (unsigned long) buf);
 	info->rkey = htonl(mr->rkey);
 	info->size = htonl(cb->size);
+	
+	switch ( cb->trans_mode ) {
+	case kRdmaTrans_ActRead:
+		info->mode = htonl(MODE_RDMA_ACTRD);
+		break;
+	case kRdmaTrans_ActWrte:
+		info->mode = htonl(MODE_RDMA_ACTWR);
+		break;
+	case kRdmaTrans_PasRead:
+		info->mode = htonl(MODE_RDMA_PASRD);
+		break;
+	case kRdmaTrans_PasWrte:
+		info->mode = htonl(MODE_RDMA_PASWR);
+		break;
+	default:
+		fprintf(stderr, "unrecognize transfer mode %d\n", \
+			cb->trans_mode);
+		break;
+	}
 
 	DEBUG_LOG("RDMA addr %" PRIx64" rkey %x len %d\n",
 		  ntohll(info->buf), ntohl(info->rkey), ntohl(info->size));
 }
 
+
+int cli_act_rdma_rd(struct rdma_cb *cb)
+{
+	return 0;
+}
+
+int cli_act_rdma_wr(struct rdma_cb *cb)
+{
+	return 0;
+}
+
+int cli_pas_rdma_rd(struct rdma_cb *cb)
+{
+	int err;
+	
+	cb->state = RDMA_READ_ADV;
+	
+	iperf_format_send(cb, cb->start_buf, cb->start_mr);
+
+	err = ibv_post_send(cb->qp, &cb->sq_wr, &bad_wr);
+	if (err) {
+		fprintf(stderr, "post send error %d\n", err);
+		return -err;
+	}
+	DPRINTF(("client ibv_post_send success\n"));
+
+	/* Wait for server to ACK read complete */
+	DPRINTF(("client RunRDMA cb @ %x\n", (unsigned long)mCb));
+	DPRINTF(("client RunRDMA sem_wait @ %x\n", (unsigned long)&mCb->sem));
+	DPRINTF(("wait server to say go ahead\n"));
+	sem_wait(&cb->sem);
+	if (cb->state != RDMA_WRITE_ADV) {
+		fprintf(stderr, "wait for RDMA_WRITE_ADV state %d\n",
+			cb->state);
+		err = -1;
+		return err;
+	}
+	DPRINTF(("client: server ACK read complete success\n"));
+	
+	return cb->size;
+}
+
+int cli_pas_rdma_wr(struct rdma_cb *cb)
+{
+	return 0;
+}
+
+int svr_act_rdma_rd(struct rdma_cb *cb)
+{
+	int ret;
+	
+	/* Issue RDMA Read. */
+	mCb->rdma_sq_wr.opcode = IBV_WR_RDMA_READ;
+	mCb->rdma_sq_wr.wr.rdma.rkey = mCb->remote_rkey;
+	mCb->rdma_sq_wr.wr.rdma.remote_addr = mCb->remote_addr;
+	mCb->rdma_sq_wr.sg_list->length = mCb->remote_len;
+	
+	ret = ibv_post_send(mCb->qp, &mCb->rdma_sq_wr, &bad_send_wr);
+	if (ret) {
+		fprintf(stderr, "post send error %d\n", ret);
+		return ret;
+	}
+	DEBUG_LOG("server posted rdma read req\n");
+
+	/* Wait for read completion */
+	sem_wait(&mCb->sem);
+	if (mCb->state != RDMA_READ_COMPLETE) {
+		fprintf(stderr, "wait for RDMA_READ_COMPLETE state %d\n",
+			mCb->state);
+		ret = -1;
+		return ret;
+	}
+	DEBUG_LOG("server received read complete\n");
+	
+	/* Display data in recv buf */
+	if (mCb->verbose)
+		printf("server ping data: %s\n", mCb->rdma_buf);
+		
+	/* Tell client to continue */
+	ret = ibv_post_send(mCb->qp, &mCb->sq_wr, &bad_send_wr);
+	if (ret) {
+		fprintf(stderr, "post send error %d\n", ret);
+		return ret;
+	}
+	DEBUG_LOG("server posted go ahead\n");
+
+	/* Wait for client's RDMA STAG/TO/Len
+	sem_wait(&mCb->sem);
+	if (mCb->state != RDMA_WRITE_ADV) {
+		fprintf(stderr, "wait for RDMA_WRITE_ADV state %d\n",
+			mCb->state);
+		ret = -1;
+		break;
+	}
+	DEBUG_LOG("server received sink adv\n"); */
+
+	/* RDMA Write echo data
+	mCb->rdma_sq_wr.opcode = IBV_WR_RDMA_WRITE;
+	mCb->rdma_sq_wr.wr.rdma.rkey = mCb->remote_rkey;
+	mCb->rdma_sq_wr.wr.rdma.remote_addr = mCb->remote_addr;
+	mCb->rdma_sq_wr.sg_list->length = strlen(mCb->rdma_buf) + 1;
+	DEBUG_LOG("rdma write from lkey %x laddr %x len %d\n",
+		  mCb->rdma_sq_wr.sg_list->lkey,
+		  mCb->rdma_sq_wr.sg_list->addr,
+		  mCb->rdma_sq_wr.sg_list->length);
+
+	ret = ibv_post_send(mCb->qp, &mCb->rdma_sq_wr, &bad_send_wr);
+	if (ret) {
+		fprintf(stderr, "post send error %d\n", ret);
+		break;
+	} */
+
+	/* Wait for completion
+	ret = sem_wait(&mCb->sem);
+	if (mCb->state != RDMA_WRITE_COMPLETE) {
+		fprintf(stderr, "wait for RDMA_WRITE_COMPLETE state %d\n",
+			mCb->state);
+		ret = -1;
+		break;
+	}
+	DEBUG_LOG("server rdma write complete \n"); */
+
+	/* Tell client to begin again
+	ret = ibv_post_send(mCb->qp, &mCb->sq_wr, &bad_send_wr);
+	if (ret) {
+		fprintf(stderr, "post send error %d\n", ret);
+		break;
+	}
+	DEBUG_LOG("server posted go ahead\n"); */
+
+	return 0;
+}
+
+int svr_act_rdma_wr(struct rdma_cb *cb)
+{
+	return 0;
+}
+
+int svr_pas_rdma_rd(struct rdma_cb *cb)
+{
+	return 0;
+}
+
+int svr_pas_rdma_wr(struct rdma_cb *cb)
+{
+	return 0;
+}

@@ -269,7 +269,25 @@ void Client::RunRDMA( void ) {
 
         // perform RDMA read or write
 //        currLen = write( mSettings->mSock, mBuf, mSettings->mBufLen );
-	DPRINTF(("client start transfer data via rdma\n"));
+	
+	switch ( mCb->trans_mode ) {
+	case kRdmaTrans_ActRead:
+		break;
+	case kRdmaTrans_ActWrte:
+		break;
+	case kRdmaTrans_PasRead:
+		currLen = cli_pas_rdma_rd( mCb );
+		break;
+	case kRdmaTrans_PasWrte:
+		currLen = cli_pas_rdma_wr( mCb );
+		break;
+	default:
+		fprintf(stderr, "unrecognized transfer mode %d\n", \
+			mCb->trans_mode);
+		break;
+	}
+	
+/*	DPRINTF(("client start transfer data via rdma\n"));
 	mCb->state = RDMA_READ_ADV;
 	
 	iperf_format_send(mCb, mCb->start_buf, mCb->start_mr);
@@ -282,7 +300,7 @@ void Client::RunRDMA( void ) {
 	DPRINTF(("client ibv_post_send success\n"));
 
 	/* Wait for server to ACK read complete */
-	DPRINTF(("client RunRDMA cb @ %x\n", (unsigned long)mCb));
+/*	DPRINTF(("client RunRDMA cb @ %x\n", (unsigned long)mCb));
 	DPRINTF(("client RunRDMA sem_wait @ %x\n", (unsigned long)&mCb->sem));
 	DPRINTF(("wait server to say go ahead\n"));
 	sem_wait(&mCb->sem);
@@ -302,23 +320,23 @@ void Client::RunRDMA( void ) {
 		break;
 	}
 
-	/* Wait for the server to say the RDMA Write is complete. */
+	/* Wait for the server to say the RDMA Write is complete.
 	sem_wait(&mCb->sem);
 	if (mCb->state != RDMA_WRITE_COMPLETE) {
 		fprintf(stderr, "wait for RDMA_WRITE_COMPLETE state %d\n",
 			mCb->state);
 		err = -1;
 		break;
-	}
+	} */
 	
 //	currLen = 2 * ( mCb->size + sizeof( iperf_rdma_info ) );
-	currLen = 2 * mCb->size;
+//	currLen = 2 * mCb->size;
 	// iperf_rdma_info is transfer via rdma recv/send
 	
-/*        if ( currLen < 0 ) {
+        if ( currLen < 0 ) {
             WARN_errno( currLen < 0, "write2" ); 
             break;
-        }*/
+        }
 	totLen += currLen;
 	
 	if( mSettings->mInterval > 0 ) {

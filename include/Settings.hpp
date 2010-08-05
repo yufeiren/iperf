@@ -95,9 +95,11 @@ typedef enum TestMode {
     kTest_DualTest,
     kTest_TradeOff,
     kTest_Unknown,
-    kTest_RDMA_Read,
-    kTest_RDMA_Write,
-    kTest_RDMA_RdWr
+//    kTest_RDMA_ActRead,
+//    kTest_RDMA_ActWrte,
+//    kTest_RDMA_PasRead,
+//    kTest_RDMA_PasWrte,
+//    kTest_RDMA_RdWr
 } TestMode;
 
 #include "Reporter.h"

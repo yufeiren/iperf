@@ -253,7 +253,8 @@ void Server::RunRDMA( void ) {
         reportstruct->packetID = 0;
         mSettings->reporthdr = InitReport( mSettings );
         
-        int first = 0;
+        sem_wait(&mCb->sem);
+        
         do {
             // perform read 
 //            currLen = recv( mSettings->mSock, mBuf, mSettings->mBufLen, 0 ); 
@@ -261,9 +262,8 @@ void Server::RunRDMA( void ) {
 	    DPRINTF(("server start transfer data via rdma\n"));
 	    DPRINTF(("cb @ %x\n", (unsigned long)mCb));
 	    DPRINTF(("sem_wait @ %x\n", (unsigned long)&mCb->sem));
-            if (first == 1)
-		sem_wait(&mCb->sem);
-	    first = 1;
+            	
+	        
 		if (mCb->state != RDMA_READ_ADV) {
 			fprintf(stderr, "wait for RDMA_READ_ADV state %d\n",
 				mCb->state);
@@ -271,9 +271,23 @@ void Server::RunRDMA( void ) {
 			break;
 		}
 
+		switch ( cb->trans_mode ) {
+		case kRdmaTrans_ActRead:
+			currLen = svr_act_rdma_rd( mCb );
+			break;
+		case kRdmaTrans_ActWrte:
+			break;
+		case kRdmaTrans_PasRead:
+			currLen = svr_pas_rdma_rd( mCb );
+			break;
+		case kRdmaTrans_PasWrte:
+			currLen = svr_pas_rdma_wr( mCb );
+			break;
+		}
+
 		DEBUG_LOG("server received sink adv\n");
 
-		/* Issue RDMA Read. */
+		/* Issue RDMA Read.
 		mCb->rdma_sq_wr.opcode = IBV_WR_RDMA_READ;
 		mCb->rdma_sq_wr.wr.rdma.rkey = mCb->remote_rkey;
 		mCb->rdma_sq_wr.wr.rdma.remote_addr = mCb->remote_addr;
@@ -284,9 +298,9 @@ void Server::RunRDMA( void ) {
 			fprintf(stderr, "post send error %d\n", ret);
 			break;
 		}
-		DEBUG_LOG("server posted rdma read req\n");
+		DEBUG_LOG("server posted rdma read req\n"); */
 
-		/* Wait for read completion */
+		/* Wait for read completion
 		sem_wait(&mCb->sem);
 		if (mCb->state != RDMA_READ_COMPLETE) {
 			fprintf(stderr, "wait for RDMA_READ_COMPLETE state %d\n",
@@ -294,22 +308,22 @@ void Server::RunRDMA( void ) {
 			ret = -1;
 			break;
 		}
-		DEBUG_LOG("server received read complete\n");
+		DEBUG_LOG("server received read complete\n"); */
 
-		/* Display data in recv buf */
+		/* Display data in recv buf
 		if (mCb->verbose)
-			printf("server ping data: %s\n", mCb->rdma_buf);
+			printf("server ping data: %s\n", mCb->rdma_buf); */
 			
-		/* Tell client to continue */
+		/* Tell client to continue
 		ret = ibv_post_send(mCb->qp, &mCb->sq_wr, &bad_send_wr);
 		if (ret) {
 			fprintf(stderr, "post send error %d\n", ret);
 			break;
 		}
-		DEBUG_LOG("server posted go ahead\n");
+		DEBUG_LOG("server posted go ahead\n"); */
 // sleep(5);
 
-/* Wait for client's RDMA STAG/TO/Len */
+		/* Wait for client's RDMA STAG/TO/Len
 		sem_wait(&mCb->sem);
 		if (mCb->state != RDMA_WRITE_ADV) {
 			fprintf(stderr, "wait for RDMA_WRITE_ADV state %d\n",
@@ -317,9 +331,9 @@ void Server::RunRDMA( void ) {
 			ret = -1;
 			break;
 		}
-		DEBUG_LOG("server received sink adv\n");
+		DEBUG_LOG("server received sink adv\n"); */
 
-		/* RDMA Write echo data */
+		/* RDMA Write echo data
 		mCb->rdma_sq_wr.opcode = IBV_WR_RDMA_WRITE;
 		mCb->rdma_sq_wr.wr.rdma.rkey = mCb->remote_rkey;
 		mCb->rdma_sq_wr.wr.rdma.remote_addr = mCb->remote_addr;
@@ -333,9 +347,9 @@ void Server::RunRDMA( void ) {
 		if (ret) {
 			fprintf(stderr, "post send error %d\n", ret);
 			break;
-		}
+		} */
 
-		/* Wait for completion */
+		/* Wait for completion
 		ret = sem_wait(&mCb->sem);
 		if (mCb->state != RDMA_WRITE_COMPLETE) {
 			fprintf(stderr, "wait for RDMA_WRITE_COMPLETE state %d\n",
@@ -343,17 +357,17 @@ void Server::RunRDMA( void ) {
 			ret = -1;
 			break;
 		}
-		DEBUG_LOG("server rdma write complete \n");
+		DEBUG_LOG("server rdma write complete \n"); */
 
-		/* Tell client to begin again */
+		/* Tell client to begin again
 		ret = ibv_post_send(mCb->qp, &mCb->sq_wr, &bad_send_wr);
 		if (ret) {
 			fprintf(stderr, "post send error %d\n", ret);
 			break;
 		}
-		DEBUG_LOG("server posted go ahead\n");
+		DEBUG_LOG("server posted go ahead\n"); */
 		
-            currLen = 2 * ( mCb->remote_len + sizeof( iperf_rdma_info ) );
+//            currLen = 2 * ( mCb->remote_len + sizeof( iperf_rdma_info ) );
             DEBUG_LOG("server: RDMA read %ld byte this time\n", currLen);
             
             if ( isUDP( mSettings ) ) {

@@ -111,7 +111,14 @@ struct iperf_rdma_info {
 	uint64_t buf;
 	uint32_t rkey;
 	uint32_t size;
+	uint32_t mode;	// for rdma transfer mode
 };
+
+
+#define MODE_RDMA_ACTRD      0x00000001
+#define MODE_RDMA_ACTWR      0x00000002
+#define MODE_RDMA_PASRD      0x00000003
+#define MODE_RDMA_PASWR      0x00000004
 
 /*
  * Default max buffer size for IO...
@@ -161,6 +168,7 @@ typedef struct rdma_cb {
 	uint32_t remote_rkey;		/* remote guys RKEY */
 	uint64_t remote_addr;		/* remote guys TO */
 	uint32_t remote_len;		/* remote guys LEN */
+	uint32_t remote_mode;		/* remote guys transfer MODE */
 
 	char *start_buf;		/* rdma read src */
 	struct ibv_mr *start_mr;
@@ -181,6 +189,8 @@ typedef struct rdma_cb {
 	struct rdma_cm_id *cm_id;	/* connection on client side,*/
 					/* listener on service side. */
 	struct rdma_cm_id *child_cm_id;	/* connection on server side */
+	
+	RdmaTransMode trans_mode;	/* rdma transfer mode */
 } rdma_cb;
 
 
@@ -216,6 +226,19 @@ int rdma_connect_client(struct rdma_cb *cb);
 int iperf_accept(struct rdma_cb *cb);
 
 void iperf_format_send(struct rdma_cb *cb, char *buf, struct ibv_mr *mr);
+
+/* data transfer method */
+
+int cli_act_rdma_rd(struct rdma_cb *cb);
+int cli_act_rdma_wr(struct rdma_cb *cb);
+int cli_pas_rdma_rd(struct rdma_cb *cb);
+int cli_pas_rdma_wr(struct rdma_cb *cb);
+
+int svr_act_rdma_rd(struct rdma_cb *cb);
+int svr_act_rdma_wr(struct rdma_cb *cb);
+int svr_pas_rdma_rd(struct rdma_cb *cb);
+int svr_pas_rdma_wr(struct rdma_cb *cb);
+
 
 #ifdef __cplusplus
 } /* end extern "C" */
