@@ -649,8 +649,6 @@ void Client::ConnectRDMA( ) {
 		return;
 	}
 
-	fprintf(stdout, "rdma_resolve_addr - rdma_resolve_route successful\n");
-	
 	rc = iperf_setup_qp(mCb, mCb->cm_id);
 	if (rc) {
 		fprintf(stderr, "iperf_setup_qp failed: %d\n", rc);

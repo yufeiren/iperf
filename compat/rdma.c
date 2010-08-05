@@ -151,7 +151,7 @@ int iperf_cma_event_handler(struct rdma_cm_id *cma_id,
 		break;
 
 	case RDMA_CM_EVENT_DISCONNECTED:
-		fprintf(stderr, "%s DISCONNECT EVENT...\n",
+		fprintf(stderr, "RDMA %s DISCONNECT EVENT...\n",
 			cb->server ? "server" : "client");
 		sem_post(&cb->sem);
 		break;
