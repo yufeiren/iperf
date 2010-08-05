@@ -141,7 +141,9 @@ void client_init( thread_Settings *clients ) {
     Mutex_Lock( &groupCond );
     groupID--;
     clients->multihdr = InitMulti( clients, groupID );
-    DRPINTF(("multihdr groupID is %d, threads %d\n", clients->multihdr->groupID, clients->multihdr->threads));
+    if (clients->multihdr != NULL)
+	DPRINTF(("multihdr groupID is %d, threads %d\n", \
+		clients->multihdr->groupID, clients->multihdr->threads));
     Mutex_Unlock( &groupCond );
 
 #ifdef HAVE_THREAD

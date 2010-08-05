@@ -234,8 +234,6 @@ void Client::RunRDMA( void ) {
 
     char* readAt = mBuf;
 
-    // struct rdma_cb* cb = GetRdmaCB;mSettings->cb;
-    
     struct ibv_send_wr* bad_wr;
     
     // Indicates if the stream is readable 
@@ -313,7 +311,9 @@ void Client::RunRDMA( void ) {
 		break;
 	}
 	
-	currLen = 2 * ( mCb->size + sizeof( iperf_rdma_info ) );
+//	currLen = 2 * ( mCb->size + sizeof( iperf_rdma_info ) );
+	currLen = 2 * mCb->size;
+	// iperf_rdma_info is transfer via rdma recv/send
 	
 /*        if ( currLen < 0 ) {
             WARN_errno( currLen < 0, "write2" ); 
@@ -321,11 +321,11 @@ void Client::RunRDMA( void ) {
         }*/
 	totLen += currLen;
 	
-	if(mSettings->mInterval > 0) {
+	if( mSettings->mInterval > 0 ) {
     	    gettimeofday( &(reportstruct->packetTime), NULL );
             reportstruct->packetLen = currLen;
             ReportPacket( mSettings->reporthdr, reportstruct );
-        }	
+        }
 
         if ( !mMode_Time ) {
             /* mAmount may be unsigned, so don't let it underflow! */
