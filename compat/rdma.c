@@ -681,8 +681,8 @@ int cli_pas_rdma_rd(struct rdma_cb *cb)
 	DPRINTF(("client ibv_post_send success\n"));
 
 	/* Wait for server to ACK read complete */
-	DPRINTF(("client RunRDMA cb @ %x\n", (unsigned long)mCb));
-	DPRINTF(("client RunRDMA sem_wait @ %x\n", (unsigned long)&mCb->sem));
+	DPRINTF(("client RunRDMA cb @ %x\n", (unsigned long)cb));
+	DPRINTF(("client RunRDMA sem_wait @ %x\n", (unsigned long)&cb->sem));
 	DPRINTF(("wait server to say go ahead\n"));
 	sem_wait(&cb->sem);
 	if (cb->state != RDMA_WRITE_ADV) {
