@@ -842,7 +842,8 @@ int svr_act_rdma_wr(struct rdma_cb *cb)
 	cb->rdma_sq_wr.opcode = IBV_WR_RDMA_WRITE;
 	cb->rdma_sq_wr.wr.rdma.rkey = cb->remote_rkey;
 	cb->rdma_sq_wr.wr.rdma.remote_addr = cb->remote_addr;
-	cb->rdma_sq_wr.sg_list->length = strlen(cb->rdma_buf) + 1;
+//	cb->rdma_sq_wr.sg_list->length = strlen(cb->rdma_buf) + 1;
+	cb->rdma_sq_wr.sg_list->length = cb->remote_len;
 /* ?????????????? */
 	DEBUG_LOG("rdma write from lkey %x laddr %x len %d\n",
 		  cb->rdma_sq_wr.sg_list->lkey,
