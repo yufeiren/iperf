@@ -822,10 +822,14 @@ int svr_act_rdma_wr(struct rdma_cb *cb)
 	struct ibv_recv_wr *bad_recv_wr;
 
 	/* Wait for client's RDMA STAG/TO/Len */
-	cb->state = RDMA_READ_COMPLETE;
+	if ( cb->state == RDMA_READ_ADV ) // established, key recved
+		cb->state = RDMA_WRITE_ADV;
+	else {// established, key not recved
+		cb->state = RDMA_READ_COMPLETE;
+		sem_wait(&cb->sem);
+	}
 	DPRINTF(("sem_wait @ %x RDMA_WRITE_ADV\n", \
 		(unsigned long)&cb->sem));
-	sem_wait(&cb->sem);
 	if (cb->state != RDMA_WRITE_ADV) {
 		fprintf(stderr, "wait for RDMA_WRITE_ADV state %d\n",
 			cb->state);
