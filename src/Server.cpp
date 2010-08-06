@@ -253,8 +253,6 @@ void Server::RunRDMA( void ) {
         reportstruct->packetID = 0;
         mSettings->reporthdr = InitReport( mSettings );
         
-        sem_wait(&mCb->sem);
-        
         do {
             // perform read 
 //            currLen = recv( mSettings->mSock, mBuf, mSettings->mBufLen, 0 ); 
@@ -262,7 +260,8 @@ void Server::RunRDMA( void ) {
 	    DPRINTF(("server start transfer data via rdma\n"));
 	    DPRINTF(("cb @ %x\n", (unsigned long)mCb));
 	    DPRINTF(("sem_wait @ %x\n", (unsigned long)&mCb->sem));
-            	
+        	DPRINTF(("server cb state: %d\n", mCb->state));
+            	sem_wait(&mCb->sem);
 	        
 		if (mCb->state != RDMA_READ_ADV) {
 			fprintf(stderr, "wait for RDMA_READ_ADV state %d\n",
