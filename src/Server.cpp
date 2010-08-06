@@ -264,9 +264,7 @@ void Server::RunRDMA( void ) {
 	    DPRINTF(("sem_wait @ %x\n", (unsigned long)&mCb->sem));
         	DPRINTF(("server cb state: %d\n", mCb->state));
             	
-            	if ( first )
-		    sem_wait(&mCb->sem);
-	        first = 1;
+            	
 	        /*
 	        mCb->state = RDMA_READ_ADV;
 	        
@@ -279,6 +277,9 @@ void Server::RunRDMA( void ) {
 
 		switch ( mCb->trans_mode ) {
 		case kRdmaTrans_ActRead:
+			if ( first )
+			    sem_wait(&mCb->sem);
+		        first = 1;
 			currLen = svr_act_rdma_rd( mCb );
 			break;
 		case kRdmaTrans_ActWrte:
