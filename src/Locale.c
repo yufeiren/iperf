@@ -86,7 +86,8 @@ Client/Server:\n\
   -w, --window    #[KM]    TCP window size (socket buffer size)\n\
   -B, --bind      <host>   bind to <host>, an interface or multicast address\n\
   -C, --compatibility      for use with older versions does not sent extra msgs\n\
-  -H, --rdma      [ar/aw/pr/pw] RDMA bw test with active/passive read/write mode \n\
+  -G, --rdma_style[ar/aw/pr/pw]  RDMA  with active/passive read/write mode \n\
+  -H, --rdma               RDMA bw test \n\
   -M, --mss       #        set TCP maximum segment size (MTU - 40 bytes)\n\
   -N, --nodelay            set TCP no delay, disabling Nagle's Algorithm\n\
   -V, --IPv6Version        Set the domain to IPv6\n\

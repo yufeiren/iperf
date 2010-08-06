@@ -224,6 +224,7 @@ int iperf_cq_event_handler(struct rdma_cb *cb)
 		if (wc.status) {
 			fprintf(stderr, "cq completion failed status %d\n",
 				wc.status);
+			// IBV_WC_WR_FLUSH_ERR == 5
 			if (wc.status != IBV_WC_WR_FLUSH_ERR)
 				ret = -1;
 			goto error;

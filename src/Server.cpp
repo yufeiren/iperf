@@ -268,6 +268,8 @@ void Server::RunRDMA( void ) {
 		    sem_wait(&mCb->sem);
 	        first = 1;
 	        
+	        mCb->state = RDMA_READ_ADV;
+	        
 		if (mCb->state != RDMA_READ_ADV) {
 			fprintf(stderr, "wait for RDMA_READ_ADV state %d\n",
 				mCb->state);
