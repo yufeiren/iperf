@@ -618,7 +618,7 @@ void Settings_Interpret( char option, const char *optarg, thread_Settings *mExtS
 	    if ( strcmp(optarg, "ac") == 0 )
 	    	mExtSettings->mMode = kTest_RDMA_ActRead;
 	    else if ( strcmp(optarg, "aw") == 0 )
-	        mExtSettings->mMode = kTest_RDMA_ActRead;
+	        mExtSettings->mMode = kTest_RDMA_ActWrte;
 	    else if ( strcmp(optarg, "pr") == 0 )
 	        mExtSettings->mMode = kTest_RDMA_PasRead;
 	    else if ( strcmp(optarg, "pw") == 0 )
