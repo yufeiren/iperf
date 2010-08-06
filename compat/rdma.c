@@ -826,7 +826,7 @@ int svr_act_rdma_wr(struct rdma_cb *cb)
 		fprintf(stderr, "wait for RDMA_WRITE_ADV state %d\n",
 			cb->state);
 		ret = -1;
-		break;
+		return ret;
 	}
 	DEBUG_LOG("server received sink adv\n");
 
@@ -844,7 +844,7 @@ int svr_act_rdma_wr(struct rdma_cb *cb)
 	ret = ibv_post_send(cb->qp, &cb->rdma_sq_wr, &bad_send_wr);
 	if (ret) {
 		fprintf(stderr, "post send error %d\n", ret);
-		break;
+		return -ret;
 	}
 
 	/* Wait for completion */
@@ -853,7 +853,7 @@ int svr_act_rdma_wr(struct rdma_cb *cb)
 		fprintf(stderr, "wait for RDMA_WRITE_COMPLETE state %d\n",
 			cb->state);
 		ret = -1;
-		break;
+		return ret;
 	}
 	DEBUG_LOG("server rdma write complete \n");
 
@@ -861,7 +861,7 @@ int svr_act_rdma_wr(struct rdma_cb *cb)
 	ret = ibv_post_send(cb->qp, &cb->sq_wr, &bad_send_wr);
 	if (ret) {
 		fprintf(stderr, "post send error %d\n", ret);
-		break;
+		return -ret;
 	}
 	DEBUG_LOG("server posted go ahead\n");
 
