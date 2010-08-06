@@ -270,7 +270,7 @@ void Server::RunRDMA( void ) {
 			break;
 		}
 
-		switch ( cb->trans_mode ) {
+		switch ( mCb->trans_mode ) {
 		case kRdmaTrans_ActRead:
 			currLen = svr_act_rdma_rd( mCb );
 			break;
