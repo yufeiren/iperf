@@ -705,12 +705,12 @@ int svr_act_rdma_rd(struct rdma_cb *cb)
 	int ret;
 	
 	/* Issue RDMA Read. */
-	mCb->rdma_sq_wr.opcode = IBV_WR_RDMA_READ;
-	mCb->rdma_sq_wr.wr.rdma.rkey = mCb->remote_rkey;
-	mCb->rdma_sq_wr.wr.rdma.remote_addr = mCb->remote_addr;
-	mCb->rdma_sq_wr.sg_list->length = mCb->remote_len;
+	cb->rdma_sq_wr.opcode = IBV_WR_RDMA_READ;
+	cb->rdma_sq_wr.wr.rdma.rkey = cb->remote_rkey;
+	cb->rdma_sq_wr.wr.rdma.remote_addr = cb->remote_addr;
+	cb->rdma_sq_wr.sg_list->length = cb->remote_len;
 	
-	ret = ibv_post_send(mCb->qp, &mCb->rdma_sq_wr, &bad_send_wr);
+	ret = ibv_post_send(cb->qp, &cb->rdma_sq_wr, &bad_send_wr);
 	if (ret) {
 		fprintf(stderr, "post send error %d\n", ret);
 		return ret;
@@ -718,21 +718,21 @@ int svr_act_rdma_rd(struct rdma_cb *cb)
 	DEBUG_LOG("server posted rdma read req\n");
 
 	/* Wait for read completion */
-	sem_wait(&mCb->sem);
-	if (mCb->state != RDMA_READ_COMPLETE) {
+	sem_wait(&cb->sem);
+	if (cb->state != RDMA_READ_COMPLETE) {
 		fprintf(stderr, "wait for RDMA_READ_COMPLETE state %d\n",
-			mCb->state);
+			cb->state);
 		ret = -1;
 		return ret;
 	}
 	DEBUG_LOG("server received read complete\n");
 	
 	/* Display data in recv buf */
-	if (mCb->verbose)
-		printf("server ping data: %s\n", mCb->rdma_buf);
+	if (cb->verbose)
+		printf("server ping data: %s\n", cb->rdma_buf);
 		
 	/* Tell client to continue */
-	ret = ibv_post_send(mCb->qp, &mCb->sq_wr, &bad_send_wr);
+	ret = ibv_post_send(cb->qp, &cb->sq_wr, &bad_send_wr);
 	if (ret) {
 		fprintf(stderr, "post send error %d\n", ret);
 		return ret;
