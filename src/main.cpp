@@ -104,7 +104,7 @@ extern "C" {
     // for reporting.
     int PseudoSock = 0;
     
-    int rdma_debug = 0;
+    int rdma_debug = 1;
 
 }
 

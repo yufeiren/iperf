@@ -720,6 +720,7 @@ int cli_pas_rdma_wr(struct rdma_cb *cb)
 		err = -1;
 		return err;
 	}
+	DPRINTF(("cli_pas_rdma_wr: RDMA_WRITE_COMPLETE\n"));
 
 	return cb->size;
 }
