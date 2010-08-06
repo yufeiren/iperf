@@ -267,7 +267,7 @@ void Server::RunRDMA( void ) {
             	if ( first )
 		    sem_wait(&mCb->sem);
 	        first = 1;
-	        
+	        /*
 	        mCb->state = RDMA_READ_ADV;
 	        
 		if (mCb->state != RDMA_READ_ADV) {
@@ -275,7 +275,7 @@ void Server::RunRDMA( void ) {
 				mCb->state);
 			ret = -1;
 			break;
-		}
+		}*/
 
 		switch ( mCb->trans_mode ) {
 		case kRdmaTrans_ActRead:

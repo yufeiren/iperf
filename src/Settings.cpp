@@ -626,7 +626,7 @@ void Settings_Interpret( char option, const char *optarg, thread_Settings *mExtS
 	    else
 	        fprintf( stderr, "unrecognized rdma transfer style\n" );
 	    
-	    DPRINTF(("transfer style %s\n", outarg));
+	    DPRINTF(("transfer style %s\n", optarg));
             }
 
             break;

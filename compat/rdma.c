@@ -710,6 +710,7 @@ int cli_pas_rdma_wr(struct rdma_cb *cb)
 		fprintf(stderr, "post send error %d\n", err);
 		return -err;
 	}
+	DPRINTF(("cli_pas_rdma_wr: ibv_post_send success\n"));
 
 	/* Wait for the server to say the RDMA Write is complete. */
 	sem_wait(&cb->sem);
@@ -821,6 +822,8 @@ int svr_act_rdma_wr(struct rdma_cb *cb)
 
 	/* Wait for client's RDMA STAG/TO/Len */
 	cb->state = RDMA_READ_COMPLETE;
+	DPRINTF(("sem_wait @ %x RDMA_WRITE_ADV\n", \
+		(unsigned long)&cb->sem));
 	sem_wait(&cb->sem);
 	if (cb->state != RDMA_WRITE_ADV) {
 		fprintf(stderr, "wait for RDMA_WRITE_ADV state %d\n",
