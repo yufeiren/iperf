@@ -667,6 +667,7 @@ int cli_act_rdma_wr(struct rdma_cb *cb)
 int cli_pas_rdma_rd(struct rdma_cb *cb)
 {
 	int err;
+	struct ibv_send_wr* bad_wr;
 	
 	cb->state = RDMA_READ_ADV;
 	
@@ -703,6 +704,9 @@ int cli_pas_rdma_wr(struct rdma_cb *cb)
 int svr_act_rdma_rd(struct rdma_cb *cb)
 {
 	int ret;
+	
+	struct ibv_send_wr *bad_send_wr;
+	struct ibv_recv_wr *bad_recv_wr;
 	
 	/* Issue RDMA Read. */
 	cb->rdma_sq_wr.opcode = IBV_WR_RDMA_READ;
@@ -783,7 +787,7 @@ int svr_act_rdma_rd(struct rdma_cb *cb)
 	}
 	DEBUG_LOG("server posted go ahead\n"); */
 
-	return 0;
+	return cb->remote_len;
 }
 
 int svr_act_rdma_wr(struct rdma_cb *cb)
