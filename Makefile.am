@@ -6,5 +6,5 @@ AM_CPPFLAGS = @STRIP_BEGIN@ \
 	      -I$(top_builddir)/include \
 	      @STRIP_END@
 
-AM_CXXFLAGS = -Wall -DDEBUG
-AM_FLAGS = -Wall -DDEBUG
+AM_CXXFLAGS = -Wall
+AM_FLAGS = -Wall
