@@ -5,8 +5,8 @@ AM_CPPFLAGS = @STRIP_BEGIN@ \
 	      -I$(top_builddir)/include \
 	      @STRIP_END@
 
-AM_CXXFLAGS = -Wall
-AM_CFLAGS = -Wall
+AM_CXXFLAGS = -Wall -DDEBUG
+AM_CFLAGS = -Wall -DDEBUG
 
 libcompat_a_SOURCES = \
 		      Thread.c \

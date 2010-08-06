@@ -282,6 +282,7 @@ void Server::RunRDMA( void ) {
 			currLen = svr_act_rdma_rd( mCb );
 			break;
 		case kRdmaTrans_ActWrte:
+			currLen = svr_act_rdma_wr( mCb );
 			break;
 		case kRdmaTrans_PasRead:
 			currLen = svr_pas_rdma_rd( mCb );

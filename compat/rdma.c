@@ -699,7 +699,28 @@ int cli_pas_rdma_rd(struct rdma_cb *cb)
 
 int cli_pas_rdma_wr(struct rdma_cb *cb)
 {
-	return 0;
+	int err;
+	struct ibv_send_wr* bad_wr;
+	
+	cb->state = RDMA_WRITE_ADV;
+
+	iperf_format_send(cb, cb->rdma_buf, cb->rdma_mr);
+	err = ibv_post_send(cb->qp, &cb->sq_wr, &bad_wr);
+	if (err) {
+		fprintf(stderr, "post send error %d\n", err);
+		return -err;
+	}
+
+	/* Wait for the server to say the RDMA Write is complete. */
+	sem_wait(&cb->sem);
+	if (cb->state != RDMA_WRITE_COMPLETE) {
+		fprintf(stderr, "wait for RDMA_WRITE_COMPLETE state %d\n",
+			cb->state);
+		err = -1;
+		return err;
+	}
+
+	return cb->size;
 }
 
 int svr_act_rdma_rd(struct rdma_cb *cb)
@@ -793,7 +814,58 @@ int svr_act_rdma_rd(struct rdma_cb *cb)
 
 int svr_act_rdma_wr(struct rdma_cb *cb)
 {
-	return 0;
+	int ret;
+	
+	struct ibv_send_wr *bad_send_wr;
+	struct ibv_recv_wr *bad_recv_wr;
+
+	/* Wait for client's RDMA STAG/TO/Len */
+	cb->state = RDMA_READ_COMPLETE;
+	sem_wait(&cb->sem);
+	if (cb->state != RDMA_WRITE_ADV) {
+		fprintf(stderr, "wait for RDMA_WRITE_ADV state %d\n",
+			cb->state);
+		ret = -1;
+		break;
+	}
+	DEBUG_LOG("server received sink adv\n");
+
+	/* RDMA Write echo data */
+	cb->rdma_sq_wr.opcode = IBV_WR_RDMA_WRITE;
+	cb->rdma_sq_wr.wr.rdma.rkey = cb->remote_rkey;
+	cb->rdma_sq_wr.wr.rdma.remote_addr = cb->remote_addr;
+	cb->rdma_sq_wr.sg_list->length = strlen(cb->rdma_buf) + 1;
+/* ?????????????? */
+	DEBUG_LOG("rdma write from lkey %x laddr %x len %d\n",
+		  cb->rdma_sq_wr.sg_list->lkey,
+		  cb->rdma_sq_wr.sg_list->addr,
+		  cb->rdma_sq_wr.sg_list->length);
+	
+	ret = ibv_post_send(cb->qp, &cb->rdma_sq_wr, &bad_send_wr);
+	if (ret) {
+		fprintf(stderr, "post send error %d\n", ret);
+		break;
+	}
+
+	/* Wait for completion */
+	ret = sem_wait(&cb->sem);
+	if (cb->state != RDMA_WRITE_COMPLETE) {
+		fprintf(stderr, "wait for RDMA_WRITE_COMPLETE state %d\n",
+			cb->state);
+		ret = -1;
+		break;
+	}
+	DEBUG_LOG("server rdma write complete \n");
+
+	/* Tell client to begin again */
+	ret = ibv_post_send(cb->qp, &cb->sq_wr, &bad_send_wr);
+	if (ret) {
+		fprintf(stderr, "post send error %d\n", ret);
+		break;
+	}
+	DEBUG_LOG("server posted go ahead\n");
+
+	return cb->remote_len;
 }
 
 int svr_pas_rdma_rd(struct rdma_cb *cb)
