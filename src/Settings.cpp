@@ -109,6 +109,7 @@ const struct option long_options[] =
 {"compatibility",    no_argument, NULL, 'C'},
 {"daemon",           no_argument, NULL, 'D'},
 {"file_input", required_argument, NULL, 'F'},
+{"rdma_style", required_argument, NULL, 'G'},
 {"rdma",             no_argument, NULL, 'H'},
 {"stdin_input",      no_argument, NULL, 'I'},
 {"mss",        required_argument, NULL, 'M'},
@@ -171,7 +172,7 @@ const struct option env_options[] =
 
 #define SHORT_OPTIONS()
 
-const char short_options[] = "1b:c:df:hi:l:mn:o:p:rst:uvw:x:y:B:CDF:HIL:M:NP:RS:T:UVWZ:";
+const char short_options[] = "1b:c:df:hi:l:mn:o:p:rst:uvw:x:y:B:CDF:G:HIL:M:NP:RS:T:UVWZ:";
 
 /* -------------------------------------------------------------------
  * defaults
@@ -611,6 +612,25 @@ void Settings_Interpret( char option, const char *optarg, thread_Settings *mExtS
             strcpy( mExtSettings->mFileName, optarg);
             break;
 
+        case 'G' : // Get the rdma client transfer style
+            if ( mExtSettings->mThreadMode == kMode_RDMA_Client ) {
+                Settings_GetUpperCaseArg(optarg,outarg);
+	    if ( strcmp(outarg, "AC") == 0 )
+	    	mExtSettings->mMode = kTest_RDMA_ActRead;
+	    else if ( strcmp(outarg, "AW") == 0 )
+	        mExtSettings->mMode = kTest_RDMA_ActRead;
+	    else if ( strcmp(outarg, "PR") == 0 )
+	        mExtSettings->mMode = kTest_RDMA_PasRead;
+	    else if ( strcmp(outarg, "PW") == 0 )
+	        mExtSettings->mMode = kTest_RDMA_PasWrte;
+	    else
+	        fprintf( stderr, "unrecognized rdma transfer style\n" );
+	    
+	    DPRINTF(("transfer style %s\n", outarg));
+            }
+
+            break;
+
         case 'H': // Run as RDMA style
 	    if ( mExtSettings->mThreadMode == kMode_Listener )
 		mExtSettings->mThreadMode = kMode_RDMA_Listener;
@@ -618,7 +638,8 @@ void Settings_Interpret( char option, const char *optarg, thread_Settings *mExtS
 		mExtSettings->mThreadMode = kMode_RDMA_Client;
 	    else
 		fprintf( stderr, warn_invalid_report_style );
-            break;
+
+	    break;
 
         case 'I' : // Set the stdin as the input source
             if ( mExtSettings->mThreadMode != kMode_Client ) {

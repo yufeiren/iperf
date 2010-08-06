@@ -253,6 +253,7 @@ void Server::RunRDMA( void ) {
         reportstruct->packetID = 0;
         mSettings->reporthdr = InitReport( mSettings );
         
+        sleep(1);
         do {
             // perform read 
 //            currLen = recv( mSettings->mSock, mBuf, mSettings->mBufLen, 0 ); 

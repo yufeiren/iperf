@@ -95,10 +95,10 @@ typedef enum TestMode {
     kTest_DualTest,
     kTest_TradeOff,
     kTest_Unknown,
-//    kTest_RDMA_ActRead,
-//    kTest_RDMA_ActWrte,
-//    kTest_RDMA_PasRead,
-//    kTest_RDMA_PasWrte,
+    kTest_RDMA_ActRead,
+    kTest_RDMA_ActWrte,
+    kTest_RDMA_PasRead,
+    kTest_RDMA_PasWrte,
 //    kTest_RDMA_RdWr
 } TestMode;
 

@@ -109,6 +109,26 @@ Client::Client( thread_Settings *inSettings ) {
 	
 	mCb->size = mSettings->mBufLen;
 	DPRINTF(("client buffer size is %d\n", mCb->size));
+	
+	switch ( mSettings->mMode ) {
+	case kTest_RDMA_ActRead:
+	    mCb->trans_mode = kRdmaTrans_ActRead;
+	    break;
+	case kTest_RDMA_ActWrte:
+	    mCb->trans_mode = kRdmaTrans_ActWrte;
+	    break;
+	case kTest_RDMA_PasRead:
+	    mCb->trans_mode = kRdmaTrans_PasRead;
+	    break;
+	case kTest_RDMA_PasWrte:
+	    mCb->trans_mode = kRdmaTrans_PasWrte;
+	    break;
+	default:
+	    fprintf(stderr, "unrecognize transfer mode %d\n", mSettings->mMode);
+	    break;
+	} // end switch
+	
+	
 	}
 	ConnectRDMA( );
     }
