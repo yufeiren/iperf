@@ -614,14 +614,14 @@ void Settings_Interpret( char option, const char *optarg, thread_Settings *mExtS
 
         case 'G' : // Get the rdma client transfer style
             if ( mExtSettings->mThreadMode == kMode_RDMA_Client ) {
-                Settings_GetUpperCaseArg(optarg,outarg);
-	    if ( strcmp(outarg, "AC") == 0 )
+                // Settings_GetUpperCaseArg(optarg,outarg);
+	    if ( strcmp(optarg, "ac") == 0 )
 	    	mExtSettings->mMode = kTest_RDMA_ActRead;
-	    else if ( strcmp(outarg, "AW") == 0 )
+	    else if ( strcmp(optarg, "aw") == 0 )
 	        mExtSettings->mMode = kTest_RDMA_ActRead;
-	    else if ( strcmp(outarg, "PR") == 0 )
+	    else if ( strcmp(optarg, "pr") == 0 )
 	        mExtSettings->mMode = kTest_RDMA_PasRead;
-	    else if ( strcmp(outarg, "PW") == 0 )
+	    else if ( strcmp(optarg, "pw") == 0 )
 	        mExtSettings->mMode = kTest_RDMA_PasWrte;
 	    else
 	        fprintf( stderr, "unrecognized rdma transfer style\n" );
