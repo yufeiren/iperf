@@ -603,7 +603,7 @@ void Settings_Interpret( char option, const char *optarg, thread_Settings *mExtS
 
         case 'F' : // Get the input for the data stream from a file
             if ( (mExtSettings->mThreadMode != kMode_Client) 
-	    	|| (mExtSettings->mThreadMode != kMode_RDMA_Client) ) {
+	    	&& (mExtSettings->mThreadMode != kMode_RDMA_Client) ) {
                 fprintf( stderr, warn_invalid_server_option, option );
                 break;
             }
