@@ -281,9 +281,13 @@ void Client::RunRDMA( void ) {
     do {
         // Read the next data block from 
         // the file if it's file input 
-        if ( isFileInput( mSettings ) ) {
+        if ( isFileInput( mSettings ) 
+		&& ( (mCb->trans_mode == kRdmaTrans_ActWrte) ||
+		(mCb->trans_mode == kRdmaTrans_PasRead) ) ) {
             Extractor_getNextDataBlock( readAt, mSettings ); 
-            canRead = Extractor_canRead( mSettings ) != 0; 
+            canRead = Extractor_canRead( mSettings ) != 0;
+            // reset rdma buf
+            memcpy(mCb->start_buf, mBuf, mBufLen);
         } else
             canRead = true; 
 
