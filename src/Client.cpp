@@ -287,7 +287,7 @@ void Client::RunRDMA( void ) {
             Extractor_getNextDataBlock( readAt, mSettings ); 
             canRead = Extractor_canRead( mSettings ) != 0;
             // reset rdma buf
-            memcpy(mCb->start_buf, mBuf, mBufLen);
+            memcpy(mCb->start_buf, mBuf, mSettings->Extractor_size);
         } else
             canRead = true; 
 
