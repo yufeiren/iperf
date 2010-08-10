@@ -763,7 +763,7 @@ int svr_act_rdma_rd(struct rdma_cb *cb)
 	
 	/* write data to file output */
 	
-	if ( fp = fopen ("/data/rdmadata", "w+")) == NULL ) {
+	if ( (fp = fopen ("/data/rdmadata", "w+")) == NULL ) {
 	    fprintf( stderr, "Unable to open the file stream\n");
 	    fprintf( stderr, "Will use the default data stream\n");
     	}
