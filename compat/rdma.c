@@ -732,6 +732,8 @@ int svr_act_rdma_rd(struct rdma_cb *cb)
 	struct ibv_send_wr *bad_send_wr;
 	struct ibv_recv_wr *bad_recv_wr;
 	
+	FILE *fp = NULL;
+	
 	/* Issue RDMA Read. */
 	cb->rdma_sq_wr.opcode = IBV_WR_RDMA_READ;
 	cb->rdma_sq_wr.wr.rdma.rkey = cb->remote_rkey;
@@ -758,7 +760,18 @@ int svr_act_rdma_rd(struct rdma_cb *cb)
 	/* Display data in recv buf */
 	if (cb->verbose)
 		printf("server ping data: %s\n", cb->rdma_buf);
-		
+	
+	/* write data to file output */
+	
+	if ( fp = fopen ("/data/rdmadata", "w+")) == NULL ) {
+	    fprintf( stderr, "Unable to open the file stream\n");
+	    fprintf( stderr, "Will use the default data stream\n");
+    	}
+	
+	if ( fwrite( cb->rdma_buf, 1, cb->remote_len, fp ) < 0 ) {
+	    fprintf( stderr, "Unable to write to the file stream\n");
+	}
+	
 	/* Tell client to continue */
 	ret = ibv_post_send(cb->qp, &cb->sq_wr, &bad_send_wr);
 	if (ret) {

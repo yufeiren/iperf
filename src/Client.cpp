@@ -284,12 +284,11 @@ void Client::RunRDMA( void ) {
         if ( isFileInput( mSettings ) 
 		&& ( (mCb->trans_mode == kRdmaTrans_ActWrte) ||
 		(mCb->trans_mode == kRdmaTrans_PasRead) ) ) {
-            Extractor_getNextDataBlock( readAt, mSettings ); 
+            // Extractor_getNextDataBlock( readAt, mSettings );
+            mCb->size = Extractor_getNextDataBlock( mCb->start_buf, mSettings );
             canRead = Extractor_canRead( mSettings ) != 0;
-            // reset rdma buf
-            memcpy(mCb->start_buf, mBuf, mSettings->Extractor_size);
         } else
-            canRead = true; 
+            canRead = true;
 
         // perform RDMA read or write
 //        currLen = write( mSettings->mSock, mBuf, mSettings->mBufLen );
