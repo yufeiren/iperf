@@ -763,13 +763,17 @@ int svr_act_rdma_rd(struct rdma_cb *cb)
 	
 	/* write data to file output */
 	
-	if ( (fp = fopen ("/data/rdmadata", "w+")) == NULL ) {
+	if ( (fp = fopen ("/data/rdmadata", "ab")) == NULL ) {
 	    fprintf( stderr, "Unable to open the file stream\n");
 	    fprintf( stderr, "Will use the default data stream\n");
     	}
 	
 	if ( fwrite( cb->rdma_buf, 1, cb->remote_len, fp ) < 0 ) {
 	    fprintf( stderr, "Unable to write to the file stream\n");
+	}
+	
+	if ( fclose( fp ) != 0 ) {
+	    fprintf( stderr, "Unable to close file stream\n");
 	}
 	
 	/* Tell client to continue */
