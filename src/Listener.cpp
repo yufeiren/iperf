@@ -184,7 +184,9 @@ void Listener::Run( void ) {
         // Thread per client model is followed 
         do {
             // Get a new socket
+printf("before accept\n");
             Accept( server );
+printf("after accept\n");
             if ( server->mSock == INVALID_SOCKET ) {
                 break;
             }
@@ -286,8 +288,9 @@ void Listener::Run( void ) {
                 }
             } else
 #endif
+printf("before thread_start start\n");
             thread_start( server );
-    
+printf("after thread_start start\n");    
             // create a new socket
             if ( UDP ) {
                 mSettings->mSock = -1; 
@@ -343,6 +346,9 @@ void Listener::RunRDMA( void ) {
 			sizeof(iperf_sockaddr)) ;
 		memcpy(&server->peer, rdma_get_peer_addr(mCb->child_cm_id), \
 			sizeof(iperf_sockaddr)) ;
+		
+		DDP_HEX("local addr:", &server->local, sizeof(iperf_sockaddr));
+		DDP_HEX("peer addr:", &server->peer, sizeof(iperf_sockaddr));
 		
 			
             // Create an entry for the connection list
@@ -405,6 +411,7 @@ void Listener::RunRDMA( void ) {
             // Prep for next connection
             if ( !isSingleClient( mSettings ) ) {
                 mClients--;
+                printf("mclient %d\n", mClients);
             }
             Settings_Copy( mSettings, &server );
             server->mThreadMode = kMode_RDMA_Server;
