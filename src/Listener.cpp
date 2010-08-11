@@ -689,6 +689,8 @@ void Listener::AcceptRDMA( thread_Settings *server ) {
 			mCb->state);
 		return;
 	}
+	
+	server->mSock = ++ PseudoSock;
 /*
 	Rdma_Settings_Copy(mCb, &cb);
 //	pthread_create(&cb->persistent_server_thread, NULL, \
