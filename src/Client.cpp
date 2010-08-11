@@ -718,8 +718,8 @@ void Client::ConnectRDMA( ) {
 
 	memcpy(&mSettings->local, rdma_get_local_addr(mCb->cm_id), \
 		sizeof(iperf_sockaddr)) ;
-/*	(sockaddr*) &mSettings->peer = rdma_get_peer_addr(cb->cm_id);
-*/
+	memcpy(&mSettings->peer, rdma_get_peer_addr(mCb->cm_id), \
+		sizeof(iperf_sockaddr)) ;
 
 	mSettings->mSock = ++ PseudoSock;
 	
