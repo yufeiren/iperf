@@ -716,7 +716,8 @@ void Client::ConnectRDMA( ) {
 		goto err2;
 	}
 
-	(struct sockaddr *) &mSettings->local = rdma_get_local_addr(mCb->cm_id);
+	memcpy(&mSettings->local, rdma_get_local_addr(mCb->cm_id), \
+		sizeof(iperf_sockaddr)) ;
 /*	(sockaddr*) &mSettings->peer = rdma_get_peer_addr(cb->cm_id);
 */
 
