@@ -409,7 +409,7 @@ void Listener::RunRDMA( void ) {
             // Prep for next connection
             if ( !isSingleClient( mSettings ) ) {
                 mClients--;
-                printf("mclient %d\n", mClients);
+                DPRINTF(("mclient %d\n", mClients));
             }
             Settings_Copy( mSettings, &server );
             server->mThreadMode = kMode_RDMA_Server;
