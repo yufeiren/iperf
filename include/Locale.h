@@ -78,6 +78,10 @@ extern const char server_port[];
 
 extern const char client_port[];
 
+extern const char rdma_server_port[];
+
+extern const char rdma_client_port[];
+
 extern const char bind_address[];
 
 extern const char multicast_ttl[];
