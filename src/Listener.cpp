@@ -184,9 +184,8 @@ void Listener::Run( void ) {
         // Thread per client model is followed 
         do {
             // Get a new socket
-printf("before accept\n");
             Accept( server );
-printf("after accept\n");
+
             if ( server->mSock == INVALID_SOCKET ) {
                 break;
             }
@@ -288,9 +287,8 @@ printf("after accept\n");
                 }
             } else
 #endif
-printf("before thread_start start\n");
             thread_start( server );
-printf("after thread_start start\n");    
+
             // create a new socket
             if ( UDP ) {
                 mSettings->mSock = -1; 
