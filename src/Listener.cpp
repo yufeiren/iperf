@@ -332,12 +332,24 @@ void Listener::RunRDMA( void ) {
         do {
             // Just wait, not accept
             AcceptRDMA( server );
-/*			
+
+		DPRINTF(("start a new server\n"));
+		DPRINTF(("RunRDMA: mCb->child_cm_id %p\n", mCb->child_cm_id));
+		
+		server->child_cm_id = mCb->child_cm_id;
+		server->child_cm_id->context = server;
+		
+		memcpy(&server->local, rdma_get_local_addr(mCb->child_cm_id), \
+			sizeof(iperf_sockaddr)) ;
+		memcpy(&server->peer, rdma_get_peer_addr(mCb->child_cm_id), \
+			sizeof(iperf_sockaddr)) ;
+		
+			
             // Create an entry for the connection list
             listtemp = new Iperf_ListEntry;
             memcpy(listtemp, &server->peer, sizeof(iperf_sockaddr));
             listtemp->next = NULL;
-    
+
             // See if we need to do summing
             Mutex_Lock( &clients_mutex );
             exist = Iperf_hostpresent( &server->peer, clients); 
@@ -358,7 +370,7 @@ void Listener::RunRDMA( void ) {
             // Store entry in connection list
             Iperf_pushback( listtemp, &clients ); 
             Mutex_Unlock( &clients_mutex ); 
-    
+/*
             tempSettings = NULL;
             if ( !isCompat( mSettings ) && !isMulticast( mSettings ) ) {
                 if ( !UDP ) {
@@ -387,16 +399,6 @@ void Listener::RunRDMA( void ) {
                 }
             }
 */
-		DPRINTF(("start a new server\n"));
-		DPRINTF(("RunRDMA: mCb->child_cm_id %p\n", mCb->child_cm_id));
-		
-		server->child_cm_id = mCb->child_cm_id;
-		server->child_cm_id->context = server;
-		
-		memcpy(&server->local, rdma_get_local_addr(mCb->child_cm_id), \
-			sizeof(iperf_sockaddr)) ;
-		memcpy(&server->peer, rdma_get_peer_addr(mCb->child_cm_id), \
-			sizeof(iperf_sockaddr)) ;
 		
             thread_start( server );
     
