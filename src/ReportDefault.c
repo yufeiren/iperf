@@ -164,12 +164,22 @@ void reporter_reportsettings( ReporterData *data ) {
         printf( server_port,
                 (isUDP( data ) ? "UDP" : "TCP"), 
                 data->mPort );
+    } else if ( data->mThreadMode == kMode_RDMA_Listener ) {
+    	printf( rdma_server_port,
+                (isUDP( data ) ? "UDP" : "TCP"), 
+                data->mPort );
+    } else if ( data->mThreadMode == kMode_RDMA_Connector ) {
+    	printf( rdma_client_port,
+                data->mHost,
+                (isUDP( data ) ? "UDP" : "TCP"),
+                data->mPort );
     } else {
         printf( client_port,
                 data->mHost,
                 (isUDP( data ) ? "UDP" : "TCP"),
                 data->mPort );
     }
+    
     if ( data->mLocalhost != NULL ) {
         printf( bind_address, data->mLocalhost );
         if ( SockAddr_isMulticast( &data->connection.local ) ) {

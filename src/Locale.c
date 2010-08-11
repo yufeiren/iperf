@@ -157,6 +157,12 @@ const char server_port[] =
 const char client_port[] =
 "Client connecting to %s, %s port %d\n";
 
+const char rdma_server_port[] =
+"RDMA Server listening on %s port %d\n";
+
+const char rdma_client_port[] =
+"RDMA Client connecting to %s, %s port %d\n";
+
 const char bind_address[] =
 "Binding to local address %s\n";
 
@@ -332,7 +338,7 @@ const char warn_invalid_report_style[] =
 const char warn_invalid_report[] =
 "WARNING: unknown reporting type \"%c\", ignored\n valid options are:\n\t exclude: C(connection) D(data) M(multicast) S(settings) V(server) report\n\n";
 
-extern const char warn_invalid_rdma_style[] =
+const char warn_invalid_rdma_style[] =
 "WARNING: unknown rdma type\n\n";
 
 #ifdef __cplusplus
