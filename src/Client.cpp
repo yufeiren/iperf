@@ -715,9 +715,9 @@ void Client::ConnectRDMA( ) {
 		fprintf(stderr, "connect error %d\n", rc);
 		goto err2;
 	}
-/*
+
 	(sockaddr*) &mSettings->local = rdma_get_local_addr(cb->cm_id);
-	(sockaddr*) &mSettings->peer = rdma_get_peer_addr(cb->cm_id);
+/*	(sockaddr*) &mSettings->peer = rdma_get_peer_addr(cb->cm_id);
 */
 
 	mSettings->mSock = ++ PseudoSock;
