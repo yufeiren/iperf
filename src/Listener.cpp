@@ -339,7 +339,7 @@ void Listener::RunRDMA( void ) {
 		DPRINTF(("start a new server\n"));
 		DPRINTF(("RunRDMA: mCb->child_cm_id %p\n", mCb->child_cm_id));
 		
-		server->child_cm_id = mCb->child_cm_id;
+//		server->child_cm_id = mCb->child_cm_id;
 		server->child_cm_id->context = server;
 		
 		memcpy(&server->local, \

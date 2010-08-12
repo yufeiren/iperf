@@ -624,7 +624,7 @@ int iperf_accept(struct rdma_cb *cb)
 	conn_param.responder_resources = 1;
 	conn_param.initiator_depth = 1;
 
-printf("tid %ld, child_cm_id %p\n", pthread_self(), cb->child_cm_id);
+	DPRINTF(("tid %ld, child_cm_id %p\n", pthread_self(), cb->child_cm_id));
 
 	ret = rdma_accept(cb->child_cm_id, &conn_param);
 	if (ret) {
