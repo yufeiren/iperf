@@ -691,7 +691,7 @@ void Listener::AcceptRDMA( thread_Settings *server ) {
 	
 	item = TAILQ_FIRST(&acceptedTqh);
 	server->child_cm_id = item->child_cm_id;
-	TAILQ_REMOVE(&acceptedTqh, server->child_cm_id, entries);
+	TAILQ_REMOVE(&acceptedTqh, item, entries);
 	
 	TAILQ_UNLOCK(&acceptedTqh);
 	
