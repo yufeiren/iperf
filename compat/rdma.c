@@ -54,6 +54,8 @@
 #include "headers.h"
 #include "rdma.h"
 
+extern struct acptq acceptedTqh;
+
 static int server_recv(struct rdma_cb *cb, struct ibv_wc *wc)
 {
 	if (wc->byte_len != sizeof(cb->recv_buf)) {
@@ -142,9 +144,20 @@ int iperf_cma_event_handler(struct rdma_cm_id *cma_id,
 
 	case RDMA_CM_EVENT_CONNECT_REQUEST:
 		cb->state = CONNECT_REQUEST;
+		
+		TAILQ_LOCK(&acceptedTqh);
+		struct rdma_cm_id **child_cm_id = \
+			(struct rdma_cm_id *) malloc((void *));
+		
+		*child_cm_id = cma_id;
+				
+		TAILQ_INSERT_TAIL(&acceptedTqh, *child_cm_id, entries);
+		
+		TAILQ_UNLOCK(&acceptedTqh);
+		TAILQ_SIGNAL(&acceptedTqh);
 		cb->child_cm_id = cma_id;
 		DEBUG_LOG("child cma %p\n", cb->child_cm_id);
-		sem_post(&cb->sem);
+//		sem_post(&cb->sem);
 		break;
 
 	case RDMA_CM_EVENT_ESTABLISHED:
@@ -606,6 +619,8 @@ int iperf_accept(struct rdma_cb *cb)
 	memset(&conn_param, 0, sizeof conn_param);
 	conn_param.responder_resources = 1;
 	conn_param.initiator_depth = 1;
+
+printf("tid %ld, child_cm_id %p\n", pthread_self(), cb->child_cm_id);
 
 	ret = rdma_accept(cb->child_cm_id, &conn_param);
 	if (ret) {

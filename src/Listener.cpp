@@ -340,9 +340,11 @@ void Listener::RunRDMA( void ) {
 		server->child_cm_id = mCb->child_cm_id;
 		server->child_cm_id->context = server;
 		
-		memcpy(&server->local, rdma_get_local_addr(mCb->child_cm_id), \
+		memcpy(&server->local, \
+			rdma_get_local_addr(server->child_cm_id), \
 			sizeof(iperf_sockaddr)) ;
-		memcpy(&server->peer, rdma_get_peer_addr(mCb->child_cm_id), \
+		memcpy(&server->peer, \
+			rdma_get_peer_addr(server->child_cm_id), \
 			sizeof(iperf_sockaddr)) ;
 		
 		DDP_HEX("local addr:", &server->local, sizeof(iperf_sockaddr));
@@ -681,7 +683,17 @@ void Listener::AcceptRDMA( thread_Settings *server ) {
 	
 	DEBUG_LOG("rdma accepting client connection request\n");
 	
-	sem_wait(&mCb->sem); // wait here
+	TAILQ_LOCK(&acceptedTqh);
+	if ( TAILQ_EMPTY(&acceptedTqh) )
+		if ( TAILQ_WAIT(&acceptedTqh) != 0)
+			fprintf(stderr, "TAILQ_WAIT acceptedTqh\n");
+	
+	server->child_cm_id = TAILQ_FIRST(&acceptedTqh);
+	TAILQ_REMOVE(&acceptedTqh, server->child_cm_id, entries);
+	
+	TAILQ_UNLOCK(&acceptedTqh);
+
+//	sem_wait(&mCb->sem); wait here
 	if (mCb->state != CONNECT_REQUEST) {
 		fprintf(stderr, "wait for CONNECT_REQUEST state %d\n",
 			mCb->state);

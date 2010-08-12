@@ -197,6 +197,8 @@ typedef uint64_t max_size_t;
 
 #include "errors.h"
 
+#include "queue.h"
+
 #ifndef SHUT_RD
     #define SHUT_RD   0
     #define SHUT_WR   1

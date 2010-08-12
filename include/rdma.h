@@ -61,6 +61,8 @@ extern "C" {
 #include <rdma/rdma_cma.h>
 #include <infiniband/arch.h>
 
+#include "queue.h"
+
 extern int rdma_debug;
 #define DEBUG_LOG if (rdma_debug) printf
 // #define DEBUG_LOG printf
@@ -193,6 +195,8 @@ typedef struct rdma_cb {
 	RdmaTransMode trans_mode;	/* rdma transfer mode */
 } rdma_cb;
 
+
+TAILQ_HEAD(acptq, struct rdma_cm_id *);
 
 
 /* prototype - defined in rdma.c*/

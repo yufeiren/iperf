@@ -244,7 +244,7 @@ void Server::RunRDMA( void ) {
 	DPRINTF(("before iperf_accept\n"));
 	ret = iperf_accept(mCb);
 	if (ret) {
-		fprintf(stderr, "connect error %d\n", ret);
+		fprintf(stderr, "accept error %d\n", ret);
 		goto err3;
 	}
 	DPRINTF(("iperf_accept success\n"));

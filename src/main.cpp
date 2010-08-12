@@ -105,6 +105,9 @@ extern "C" {
     int PseudoSock = 0;
     
     int rdma_debug = 0;
+    
+    struct acptq acceptedTqh;
+//    TAILQ_HEAD(acpTqh, struct rdma_cm_id *) acceptedTqh;
 
 }
 
@@ -218,7 +221,8 @@ int main( int argc, char **argv ) {
 	
 	    // Initialize settings to defaults
 	    Settings_Initialize_Cb( cb );
-	
+	    
+	    TAILQ_INIT(&acceptedTqh);
 //	    rdma_init( cb );
 	}
 
