@@ -196,7 +196,7 @@ typedef struct rdma_cb {
 } rdma_cb;
 
 
-TAILQ_HEAD(acptq, struct rdma_cm_id *);
+TAILQ_HEAD(acptq, rdma_cm_id *);
 
 
 /* prototype - defined in rdma.c*/
