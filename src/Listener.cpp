@@ -80,6 +80,8 @@
 #include "List.h"
 #include "util.h" 
 
+extern struct acptq acceptedTqh;
+
 /* ------------------------------------------------------------------- 
  * Stores local hostname and socket info. 
  * ------------------------------------------------------------------- */ 
