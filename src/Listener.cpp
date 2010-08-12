@@ -679,6 +679,7 @@ void Listener::Accept( thread_Settings *server ) {
 void Listener::AcceptRDMA( thread_Settings *server ) {
 //	struct rdma_conn_param conn_param;
 	int ret;
+	struct wcm_id *item;
 //	rdma_cb *cb;
 	
 	DEBUG_LOG("rdma accepting client connection request\n");
@@ -688,10 +689,13 @@ void Listener::AcceptRDMA( thread_Settings *server ) {
 		if ( TAILQ_WAIT(&acceptedTqh) != 0)
 			fprintf(stderr, "TAILQ_WAIT acceptedTqh\n");
 	
-	server->child_cm_id = TAILQ_FIRST(&acceptedTqh);
+	item = TAILQ_FIRST(&acceptedTqh);
+	server->child_cm_id = item->child_cm_id;
 	TAILQ_REMOVE(&acceptedTqh, server->child_cm_id, entries);
 	
 	TAILQ_UNLOCK(&acceptedTqh);
+	
+	free(item);
 
 //	sem_wait(&mCb->sem); wait here
 	if (mCb->state != CONNECT_REQUEST) {

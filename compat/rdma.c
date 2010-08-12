@@ -146,12 +146,16 @@ int iperf_cma_event_handler(struct rdma_cm_id *cma_id,
 		cb->state = CONNECT_REQUEST;
 		
 		TAILQ_LOCK(&acceptedTqh);
-		struct rdma_cm_id **child_cm_id = \
-			(struct rdma_cm_id *) malloc((void *));
+		struct wcm_id *item = \
+			(struct wcm_id *) malloc(sizeof(struct wcm_id));
+		if (item == NULL) {
+			fprintf(stderr, "Out of Memory\n");
+			exit(EXIT_FAILURE);
+		}
 		
-		*child_cm_id = cma_id;
+		item->child_cm_id = cma_id;
 				
-		TAILQ_INSERT_TAIL(&acceptedTqh, *child_cm_id, entries);
+		TAILQ_INSERT_TAIL(&acceptedTqh, item, entries);
 		
 		TAILQ_UNLOCK(&acceptedTqh);
 		TAILQ_SIGNAL(&acceptedTqh);

@@ -196,7 +196,13 @@ typedef struct rdma_cb {
 } rdma_cb;
 
 
-TAILQ_HEAD(acptq, rdma_cm_id *);
+typedef struct wcm_id {
+	struct rdma_cm_id *child_cm_id;
+	
+	TAILQ_ENTRY(wcm_id) entries;
+} wcm_id;
+
+TAILQ_HEAD(acptq, wcm_id *);
 
 
 /* prototype - defined in rdma.c*/
