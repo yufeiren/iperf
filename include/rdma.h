@@ -202,7 +202,7 @@ typedef struct wcm_id {
 	TAILQ_ENTRY(wcm_id) entries;
 } wcm_id;
 
-TAILQ_HEAD(acptq, wcm_id *);
+TAILQ_HEAD(acptq, wcm_id);
 
 
 /* prototype - defined in rdma.c*/
