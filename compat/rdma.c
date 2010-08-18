@@ -771,7 +771,8 @@ int svr_act_rdma_rd(struct rdma_cb *cb)
 		return ret;
 	}
 	DEBUG_LOG("server posted rdma read req\n");
-
+if (cb->firstrans == 0)
+printf("@ %x server posted rdma read req\n", (unsigned long)&cb->sem);
 	/* Wait for read completion */
 	sem_wait(&cb->sem);
 	if (cb->state != RDMA_READ_COMPLETE) {
@@ -781,7 +782,8 @@ int svr_act_rdma_rd(struct rdma_cb *cb)
 		return ret;
 	}
 	DEBUG_LOG("server received read complete\n");
-	
+if (cb->firstrans == 0)
+printf("@ %x server received read complete\n", (unsigned long)&cb->sem);
 	/* Display data in recv buf */
 	if (cb->verbose)
 		printf("server ping data: %s\n", cb->rdma_buf);
@@ -800,7 +802,8 @@ int svr_act_rdma_rd(struct rdma_cb *cb)
 	if ( fclose( fp ) != 0 ) {
 	    fprintf( stderr, "Unable to close file stream\n");
 	}
-	
+if (cb->firstrans == 0)
+printf("@ %x write file success\n", (unsigned long)&cb->sem);
 	/* Tell client to continue */
 	ret = ibv_post_send(cb->qp, &cb->sq_wr, &bad_send_wr);
 	if (ret) {
@@ -808,7 +811,9 @@ int svr_act_rdma_rd(struct rdma_cb *cb)
 		return ret;
 	}
 	DEBUG_LOG("server posted go ahead\n");
-
+if (cb->firstrans == 0)
+printf("@ %x server posted go ahead\n", (unsigned long)&cb->sem);
+cb->firstrans == 1;
 	/* Wait for client's RDMA STAG/TO/Len
 	sem_wait(&mCb->sem);
 	if (mCb->state != RDMA_WRITE_ADV) {
