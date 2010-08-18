@@ -254,7 +254,7 @@ void Server::RunRDMA( void ) {
         reportstruct->packetID = 0;
         mSettings->reporthdr = InitReport( mSettings );
         
-        int first = 0;
+        int first = 1;
         
         do {
             // perform read 
@@ -274,12 +274,12 @@ void Server::RunRDMA( void ) {
 			ret = -1;
 			break;
 		}*/
-
+if (first == 1) printf("[%d] start 1st data transfer\n", mSettings->mSock);
 		switch ( mCb->trans_mode ) {
 		case kRdmaTrans_ActRead:
-			if ( first )
+			if ( !first )
 			    sem_wait(&mCb->sem);
-		        first = 1;
+		        first = 0;
 			currLen = svr_act_rdma_rd( mCb );
 			break;
 		case kRdmaTrans_ActWrte:
@@ -292,7 +292,7 @@ void Server::RunRDMA( void ) {
 			currLen = svr_pas_rdma_wr( mCb );
 			break;
 		}
-
+if (first == 1) printf("[%d] finish 1st data transfer\n", mSettings->mSock);
 		DEBUG_LOG("server received sink adv\n");
 
 		/* Issue RDMA Read.
