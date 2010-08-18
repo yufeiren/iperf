@@ -280,6 +280,7 @@ void Server::RunRDMA( void ) {
 		case kRdmaTrans_ActRead:
 			if ( !first )
 			    sem_wait(&mCb->sem);
+			first = 0;
 			currLen = svr_act_rdma_rd( mCb );
 			break;
 		case kRdmaTrans_ActWrte:
