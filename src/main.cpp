@@ -105,7 +105,7 @@ extern "C" {
     int PseudoSock = 3;
     // 0 1 2 is STDIN STDOUT STDERR
     Mutex PseudoSockCond;
-    // Mutex for PseudoSock (client need, server don't)  
+    // Mutex for PseudoSock (client need, server don't)
     
     int rdma_debug = 0;
     

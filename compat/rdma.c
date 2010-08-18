@@ -704,7 +704,13 @@ int cli_pas_rdma_rd(struct rdma_cb *cb)
 	DPRINTF(("client RunRDMA cb @ %x\n", (unsigned long)cb));
 	DPRINTF(("client RunRDMA sem_wait @ %x\n", (unsigned long)&cb->sem));
 	DPRINTF(("wait server to say go ahead\n"));
-	sem_wait(&cb->sem);
+if (cb->firstrans == 0)
+printf("start client RunRDMA sem_wait @ %x\n", (unsigned long)&cb->sem);
+	sem_wait(&cb->sem);'
+if (cb->firstrans == 0)
+printf("end client RunRDMA sem_wait @ %x\n", (unsigned long)&cb->sem);
+
+cb->firstrans = 1;
 	if (cb->state != RDMA_WRITE_ADV) {
 		fprintf(stderr, "wait for RDMA_WRITE_ADV state %d\n",
 			cb->state);

@@ -194,6 +194,8 @@ typedef struct rdma_cb {
 	struct rdma_cm_id *child_cm_id;	/* connection on server side */
 	
 	RdmaTransMode trans_mode;	/* rdma transfer mode */
+	
+	int firstrans; // for debug
 } rdma_cb;
 
 
