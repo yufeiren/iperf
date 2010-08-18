@@ -279,7 +279,7 @@ void Client::RunRDMA( void ) {
 	}
     }
 
-printf("[%d] data transfer\n", mSettings->mSock);
+printf("[%d] data transfer start\n", mSettings->mSock);
     do {
         // Read the next data block from 
         // the file if it's file input 
@@ -381,7 +381,7 @@ printf("[%d] data transfer\n", mSettings->mSock);
 
     } while ( ! (sInterupted  || 
                    (!mMode_Time  &&  0 >= mSettings->mAmount)) && canRead ); 
-
+printf("[%d] data transfer end\n", mSettings->mSock);
     // stop timing
     gettimeofday( &(reportstruct->packetTime), NULL );
 
