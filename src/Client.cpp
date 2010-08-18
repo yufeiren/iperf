@@ -280,6 +280,7 @@ void Client::RunRDMA( void ) {
     }
 
 printf("[%d] data transfer start\n", mSettings->mSock);
+int itmp = 0;
     do {
         // Read the next data block from 
         // the file if it's file input 
@@ -294,7 +295,7 @@ printf("[%d] data transfer start\n", mSettings->mSock);
 
         // perform RDMA read or write
 //        currLen = write( mSettings->mSock, mBuf, mSettings->mBufLen );
-
+if (itmp == 0) printf("[%d] start1 st data transfer\n", mSettings->mSock);
 	switch ( mCb->trans_mode ) {
 	case kRdmaTrans_ActRead:
 		break;
@@ -311,6 +312,8 @@ printf("[%d] data transfer start\n", mSettings->mSock);
 			mCb->trans_mode);
 		break;
 	}
+if (itmp == 0) printf("[%d] finish 1st data transfer\n", mSettings->mSock);
+itmp = 1;
 	
 /*	DPRINTF(("client start transfer data via rdma\n"));
 	mCb->state = RDMA_READ_ADV;
