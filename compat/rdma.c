@@ -813,7 +813,7 @@ printf("@ %x write file success\n", (unsigned long)&cb->sem);
 	DEBUG_LOG("server posted go ahead\n");
 if (cb->firstrans == 0)
 printf("@ %x server posted go ahead\n", (unsigned long)&cb->sem);
-cb->firstrans == 1;
+cb->firstrans = 1;
 	/* Wait for client's RDMA STAG/TO/Len
 	sem_wait(&mCb->sem);
 	if (mCb->state != RDMA_WRITE_ADV) {
