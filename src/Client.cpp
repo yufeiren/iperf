@@ -292,7 +292,9 @@ void Client::RunRDMA( void ) {
 
         // perform RDMA read or write
 //        currLen = write( mSettings->mSock, mBuf, mSettings->mBufLen );
-	
+
+printf("[%d] data transfer\n", mSettings->mSock);
+
 	switch ( mCb->trans_mode ) {
 	case kRdmaTrans_ActRead:
 		break;
