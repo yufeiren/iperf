@@ -276,14 +276,11 @@ void Server::RunRDMA( void ) {
 			ret = -1;
 			break;
 		}*/
-if (first == 1) printf("[%d] start 1st data transfer\n", mSettings->mSock);
 		switch ( mCb->trans_mode ) {
 		case kRdmaTrans_ActRead:
 			if ( !first )
 			    sem_wait(&mCb->sem);
 			currLen = svr_act_rdma_rd( mCb );
-if (first == 1) printf("[%d] finish 1st data transfer\n", mSettings->mSock);
-		        first = 0;
 			break;
 		case kRdmaTrans_ActWrte:
 			currLen = svr_act_rdma_wr( mCb );
