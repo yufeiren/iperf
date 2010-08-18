@@ -721,7 +721,9 @@ void Client::ConnectRDMA( ) {
 	memcpy(&mSettings->peer, rdma_get_peer_addr(mCb->cm_id), \
 		sizeof(iperf_sockaddr)) ;
 
+	Mutex_Lock( &PseudoSockCond );
 	mSettings->mSock = ++ PseudoSock;
+	Mutex_Unlock( &PseudoSockCond );
 	
 	return;
 //	rping_test_client(cb);

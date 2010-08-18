@@ -102,7 +102,10 @@ extern "C" {
     // because there is no socket fd in rdmacm, but the reporter's transferID
     // is mSock in mSetting, so create a new global PseudoSock fd
     // for reporting.
-    int PseudoSock = 0;
+    int PseudoSock = 3;
+    // 0 1 2 is STDIN STDOUT STDERR
+    Mutex PseudoSockCond;
+    // Mutex for PseudoSock (client need, server don't)  
     
     int rdma_debug = 0;
     
@@ -158,6 +161,8 @@ int main( int argc, char **argv ) {
     Condition_Initialize ( &ReportDoneCond );
     Mutex_Initialize( &groupCond );
     Mutex_Initialize( &clients_mutex );
+    
+    Mutex_Initialize( &PseudoSockCond );
 
     // Initialize the thread subsystem
     thread_init( );
