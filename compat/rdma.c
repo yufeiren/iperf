@@ -260,6 +260,8 @@ int iperf_cq_event_handler(struct rdma_cb *cb)
 
 		case IBV_WC_RDMA_READ:
 			DEBUG_LOG("rdma read completion\n");
+if (cb->firstrans == 0)
+printf("@ %x RDMA_READ_COMPLETE rdma read completion\n", (unsigned long)&cb->sem);
 			cb->state = RDMA_READ_COMPLETE;
 			sem_post(&cb->sem);
 			break;
