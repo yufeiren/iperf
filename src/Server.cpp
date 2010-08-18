@@ -94,6 +94,8 @@ Server::Server( thread_Settings *inSettings ) {
 	
 	mCb->size = mSettings->mBufLen;
 	DPRINTF(("server buffer size is %d\n", mCb->size));
+	
+	mCb->outputfile = mSettings->Output_file;
 	}
 	
 	mCb->child_cm_id = inSettings->child_cm_id;

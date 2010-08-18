@@ -120,7 +120,9 @@ typedef struct thread_Settings {
     char*  mHost;                   // -c
     char*  mLocalhost;              // -B
     char*  mOutputFileName;         // -o
+    char*  mOutputDataFileName;     // -O
     FILE*  Extractor_file;
+    FILE*  Output_file;
     ReportHeader*  reporthdr;
     MultiHeader*   multihdr;
     struct thread_Settings *runNow;

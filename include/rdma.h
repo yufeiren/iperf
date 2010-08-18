@@ -195,6 +195,8 @@ typedef struct rdma_cb {
 	
 	RdmaTransMode trans_mode;	/* rdma transfer mode */
 	
+	FILE* outputfile;
+	
 	int firstrans; // for debug
 } rdma_cb;
 

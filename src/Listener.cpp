@@ -94,12 +94,23 @@ Listener::Listener( thread_Settings *inSettings ) {
 
     // initialize buffer
     mBuf = new char[ mSettings->mBufLen ];
-	
+
+    if ( (mSettings->Output_file = \
+        fopen (mSettings->mOutputDataFileName, "ab")) == NULL ) {
+        
+    }
+    
     // open listening socket 
     if ( mSettings->mThreadMode == kMode_RDMA_Listener ) {
 	mCb = new rdma_cb;
 	Settings_Initialize_Cb( mCb );
 	rdma_init( mCb );
+	
+	if ( mSettings->mOutputDataFileName != NULL ) {
+	    if ( (mSettings->Output_file = \
+                fopen (mSettings->mOutputDataFileName, "ab")) == NULL )
+                fprintf( stderr, "Unable to open the outfile stream\n");
+	}
 
 //	Setting_Copy_Ts2Cb( mSettings, mCb );
 
@@ -118,11 +129,14 @@ Listener::Listener( thread_Settings *inSettings ) {
 	
 	mCb->size = mSettings->mBufLen;
 	DPRINTF(("Listener buffer size is %d\n", mCb->size));
+	
+	mCb->outputfile = mSettings->Output_file;
 	}
     	ListenRDMA( );
     }
     else
-        Listen( ); 
+        Listen( );
+
     ReportSettings( inSettings );
 
 } // end Listener 

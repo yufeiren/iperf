@@ -115,6 +115,7 @@ const struct option long_options[] =
 {"mss",        required_argument, NULL, 'M'},
 {"nodelay",          no_argument, NULL, 'N'},
 {"listenport", required_argument, NULL, 'L'},
+{"file_output", required_argument, NULL, 'O'},
 {"parallel",   required_argument, NULL, 'P'},
 {"remove",           no_argument, NULL, 'R'},
 {"tos",        required_argument, NULL, 'S'},
@@ -160,6 +161,7 @@ const struct option env_options[] =
 {"IPERF_MSS",        required_argument, NULL, 'M'},
 {"IPERF_NODELAY",          no_argument, NULL, 'N'},
 {"IPERF_LISTENPORT", required_argument, NULL, 'L'},
+{"IPERF_FILE_OUTPUT", required_argument, NULL, 'O'},
 {"IPERF_PARALLEL",   required_argument, NULL, 'P'},
 {"IPERF_TOS",        required_argument, NULL, 'S'},
 {"IPERF_TTL",        required_argument, NULL, 'T'},
@@ -172,7 +174,7 @@ const struct option env_options[] =
 
 #define SHORT_OPTIONS()
 
-const char short_options[] = "1b:c:df:hi:l:mn:o:p:rst:uvw:x:y:B:CDF:G:HIL:M:NP:RS:T:UVWZ:";
+const char short_options[] = "1b:c:df:hi:l:mn:o:p:rst:uvw:x:y:B:CDF:G:HIL:M:NO:P:RS:T:UVWZ:";
 
 /* -------------------------------------------------------------------
  * defaults
@@ -245,6 +247,7 @@ void Settings_Initialize_Cb( rdma_cb* main_cb )
 	main_cb->size = 64;
 	main_cb->sin.ss_family = PF_INET;
 	main_cb->port = htons(8402);
+	main_cb->outputfile = NULL;
 	sem_init(&main_cb->sem, 0, 0);
 }
 
@@ -603,7 +606,8 @@ void Settings_Interpret( char option, const char *optarg, thread_Settings *mExtS
 
         case 'F' : // Get the input for the data stream from a file
             if ( (mExtSettings->mThreadMode != kMode_Client) 
-	    	&& (mExtSettings->mThreadMode != kMode_RDMA_Client) ) {
+	    	&& (mExtSettings->mThreadMode != kMode_RDMA_Client)
+		&& (mExtSettings->mThreadMode != kMode_RDMA_Listener) ) {
                 fprintf( stderr, warn_invalid_server_option, option );
                 break;
             }
@@ -671,6 +675,11 @@ void Settings_Interpret( char option, const char *optarg, thread_Settings *mExtS
 
         case 'N': // specify TCP nodelay option (disable Jacobson's Algorithm)
             setNoDelay( mExtSettings );
+            break;
+
+	case 'O' : // Get the output for the data stream to a file
+            mExtSettings->mOutputDataFileName = new char[strlen(optarg)+1];
+            strcpy( mExtSettings->mOutputDataFileName, optarg);
             break;
 
         case 'P': // number of client threads
@@ -788,6 +797,7 @@ void Settings_GenerateListenerSettings( thread_Settings *client, thread_Settings
         (*listener)->mHost       = NULL;
         (*listener)->mLocalhost  = NULL;
         (*listener)->mOutputFileName = NULL;
+        (*listener)->mOutputDataFileName = NULL;
         (*listener)->mMode       = kTest_Normal;
         (*listener)->mThreadMode = kMode_Listener;
         if ( client->mHost != NULL ) {
