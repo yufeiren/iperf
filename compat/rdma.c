@@ -704,13 +704,7 @@ int cli_pas_rdma_rd(struct rdma_cb *cb)
 	DPRINTF(("client RunRDMA cb @ %x\n", (unsigned long)cb));
 	DPRINTF(("client RunRDMA sem_wait @ %x\n", (unsigned long)&cb->sem));
 	DPRINTF(("wait server to say go ahead\n"));
-if (cb->firstrans == 0)
-printf("start client RunRDMA sem_wait @ %x\n", (unsigned long)&cb->sem);
 	sem_wait(&cb->sem);
-if (cb->firstrans == 0)
-printf("end client RunRDMA sem_wait @ %x\n", (unsigned long)&cb->sem);
-
-cb->firstrans = 1;
 	if (cb->state != RDMA_WRITE_ADV) {
 		fprintf(stderr, "wait for RDMA_WRITE_ADV state %d\n",
 			cb->state);
@@ -769,8 +763,8 @@ int svr_act_rdma_rd(struct rdma_cb *cb)
 		return ret;
 	}
 	DEBUG_LOG("server posted rdma read req\n");
-if (cb->firstrans == 0)
-printf("@ %x server posted rdma read req\n", (unsigned long)&cb->sem);
+//if (cb->firstrans == 0)
+//printf("@ %x server posted rdma read req\n", (unsigned long)&cb->sem);
 	/* Wait for read completion */
 	sem_wait(&cb->sem);
 	if (cb->state != RDMA_READ_COMPLETE) {
@@ -780,8 +774,8 @@ printf("@ %x server posted rdma read req\n", (unsigned long)&cb->sem);
 		return ret;
 	}
 	DEBUG_LOG("server received read complete\n");
-if (cb->firstrans == 0)
-printf("@ %x server received read complete\n", (unsigned long)&cb->sem);
+//if (cb->firstrans == 0)
+//printf("@ %x server received read complete\n", (unsigned long)&cb->sem);
 	/* Display data in recv buf */
 	if (cb->verbose)
 		printf("server ping data: %s\n", cb->rdma_buf);
@@ -798,9 +792,9 @@ printf("@ %x server received read complete\n", (unsigned long)&cb->sem);
 		return ret;
 	}
 	DEBUG_LOG("server posted go ahead\n");
-if (cb->firstrans == 0)
-printf("@ %x server posted go ahead\n", (unsigned long)&cb->sem);
-cb->firstrans = 1;
+//if (cb->firstrans == 0)
+//printf("@ %x server posted go ahead\n", (unsigned long)&cb->sem);
+//cb->firstrans = 1;
 	/* Wait for client's RDMA STAG/TO/Len
 	sem_wait(&mCb->sem);
 	if (mCb->state != RDMA_WRITE_ADV) {

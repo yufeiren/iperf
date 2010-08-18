@@ -197,7 +197,7 @@ typedef struct rdma_cb {
 	
 	FILE* outputfile;
 	
-	int firstrans; // for debug
+// 	int firstrans; for debug
 } rdma_cb;
 
 
