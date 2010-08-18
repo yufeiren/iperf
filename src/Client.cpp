@@ -278,6 +278,8 @@ void Client::RunRDMA( void ) {
 	    exit(1);
 	}
     }
+
+printf("[%d] data transfer\n", mSettings->mSock);
     do {
         // Read the next data block from 
         // the file if it's file input 
@@ -292,8 +294,6 @@ void Client::RunRDMA( void ) {
 
         // perform RDMA read or write
 //        currLen = write( mSettings->mSock, mBuf, mSettings->mBufLen );
-
-printf("[%d] data transfer\n", mSettings->mSock);
 
 	switch ( mCb->trans_mode ) {
 	case kRdmaTrans_ActRead:

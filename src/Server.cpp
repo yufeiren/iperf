@@ -107,7 +107,7 @@ Server::Server( thread_Settings *inSettings ) {
  * ------------------------------------------------------------------- */
 
 Server::~Server() {
-printf("close %d\n", mSettings->mSock);
+    DPRINTF(("close %d\n", mSettings->mSock));
     if ( mSettings->mSock != INVALID_SOCKET ) {
         int rc = close( mSettings->mSock );
         WARN_errno( rc == SOCKET_ERROR, "close" );
