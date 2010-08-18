@@ -279,8 +279,9 @@ if (first == 1) printf("[%d] start 1st data transfer\n", mSettings->mSock);
 		case kRdmaTrans_ActRead:
 			if ( !first )
 			    sem_wait(&mCb->sem);
-		        first = 0;
 			currLen = svr_act_rdma_rd( mCb );
+if (first == 1) printf("[%d] finish 1st data transfer\n", mSettings->mSock);
+		        first = 0;
 			break;
 		case kRdmaTrans_ActWrte:
 			currLen = svr_act_rdma_wr( mCb );
@@ -292,7 +293,6 @@ if (first == 1) printf("[%d] start 1st data transfer\n", mSettings->mSock);
 			currLen = svr_pas_rdma_wr( mCb );
 			break;
 		}
-if (first == 1) printf("[%d] finish 1st data transfer\n", mSettings->mSock);
 		DEBUG_LOG("server received sink adv\n");
 
 		/* Issue RDMA Read.
