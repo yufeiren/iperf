@@ -706,7 +706,7 @@ int cli_pas_rdma_rd(struct rdma_cb *cb)
 	DPRINTF(("wait server to say go ahead\n"));
 if (cb->firstrans == 0)
 printf("start client RunRDMA sem_wait @ %x\n", (unsigned long)&cb->sem);
-	sem_wait(&cb->sem);'
+	sem_wait(&cb->sem);
 if (cb->firstrans == 0)
 printf("end client RunRDMA sem_wait @ %x\n", (unsigned long)&cb->sem);
 
