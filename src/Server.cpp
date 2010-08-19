@@ -167,7 +167,9 @@ void Server::Run( void ) {
                 ReportPacket( mSettings->reporthdr, reportstruct );
             }
 
-
+            if (mSettings->Output_file != NULL)
+	        if ( fwrite( mBuf, currLen, 1, mSettings->Output_file ) < 0 )
+	            fprintf( stderr, "Unable to write to the file stream\n");
 
         } while ( currLen > 0 ); 
         

@@ -782,7 +782,7 @@ int svr_act_rdma_rd(struct rdma_cb *cb)
 	
 	/* write data to file output */
 	if (cb->outputfile != NULL)
-	    if ( fwrite( cb->rdma_buf, 1, cb->remote_len, cb->outputfile ) < 0 )
+	    if ( fwrite( cb->rdma_buf, cb->remote_len, 1, cb->outputfile ) < 0 )
 	        fprintf( stderr, "Unable to write to the file stream\n");
 
 	/* Tell client to continue */
