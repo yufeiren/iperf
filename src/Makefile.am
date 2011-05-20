@@ -12,9 +12,9 @@ AM_CPPFLAGS = @STRIP_BEGIN@ \
 AM_CXXFLAGS = -Wall
 AM_CFLAGS = -Wall
 
-iperf_LDFLAGS = -DDEBUG @CFLAGS@ @PTHREAD_CFLAGS@ @WEB100_CFLAGS@ @DEFS@
+rperf_LDFLAGS = -DDEBUG @CFLAGS@ @PTHREAD_CFLAGS@ @WEB100_CFLAGS@ @DEFS@
 
-iperf_SOURCES = \
+rperf_SOURCES = \
 		Client.cpp \
 		Extractor.c \
 		Launch.cpp \
@@ -36,4 +36,4 @@ iperf_SOURCES = \
 		stdio.c \
 		tcp_window_size.c
 
-iperf_LDADD = $(LIBCOMPAT_LDADDS) -libverbs -lrdmacm
+rperf_LDADD = $(LIBCOMPAT_LDADDS) -libverbs -lrdmacm
