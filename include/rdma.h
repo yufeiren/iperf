@@ -209,6 +209,7 @@ typedef struct wcm_id {
 
 TAILQ_HEAD(acptq, wcm_id);
 
+/* struct acptq acceptedTqh; */
 
 /* prototype - defined in rdma.c*/
 

@@ -1,4 +1,4 @@
-bin_PROGRAMS = iperf
+bin_PROGRAMS = rperf
 
 LIBCOMPAT_LDADDS = @STRIP_BEGIN@ \
 		   $(top_builddir)/compat/libcompat.a \
