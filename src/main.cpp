@@ -99,13 +99,13 @@ extern "C" {
     Condition ReportCond;
     Condition ReportDoneCond;
     
-    // because there is no socket fd in rdmacm, but the reporter's transferID
-    // is mSock in mSetting, so create a new global PseudoSock fd
-    // for reporting.
+    // there is no socket fd in rdmacm and the reporter's transferID
+    // is mSock in mSetting data structure,
+    // so create a new global PseudoSock fd for reporting.
+    // 0 1 2 are STDIN STDOUT STDERR
     int PseudoSock = 3;
-    // 0 1 2 is STDIN STDOUT STDERR
+    // Mutex for PseudoSock (client need, server doesn't)
     Mutex PseudoSockCond;
-    // Mutex for PseudoSock (client need, server don't)
     
     int rdma_debug = 0;
     
@@ -186,8 +186,8 @@ int main( int argc, char **argv ) {
     // Check for either having specified client or server
     if ( ext_gSettings->mThreadMode == kMode_Client 
          || ext_gSettings->mThreadMode == kMode_Listener 
-	 || ext_gSettings->mThreadMode == kMode_RDMA_Client
-	 || ext_gSettings->mThreadMode == kMode_RDMA_Listener) {
+         || ext_gSettings->mThreadMode == kMode_RDMA_Client
+         || ext_gSettings->mThreadMode == kMode_RDMA_Listener) {
 #ifdef WIN32
         // Start the server as a daemon
         // Daemon mode for non-windows in handled
